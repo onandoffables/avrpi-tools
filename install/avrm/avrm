@@ -32,32 +32,15 @@ show_readconfig()
 	echo >&2
 }
 
-reset_spi()
-{
-	# avrdude-6.1 already handles this nicely, so there should be no need for this
-	gpio unexportall
-	for i in 7 8 9 10 11; do gpio -g mode $i in; done
-	for i in 7 8 9 10 11; do gpio -g mode $i tri; done
 
-	echo "tristate spi done" >&2
-}
-
-reset_on()
+reset()
 {
 	gpio -g mode 8 out
 	gpio -g write 8 0
-	echo "reset on -> AVR in reset" >&2
-}
-
-reset_off()
-{
-	gpio -g mode 8 out
+	sleep 1
 	gpio -g write 8 1
-	echo "reset off -> AVR running" >&2
+	gpio -g mode 8 in
 }
-
-
-
 
 
 usage()
@@ -66,20 +49,26 @@ usage()
 
 [options] is any of the following:
   -f <file>     flash <file>  uploads <file> to AVRM board
+  -i            info          show info about chip
   -r            reset         reset to Flash start (0x0000)
   -b            bootloader    reset to Bootloader mode (HWB/PE2 low)
   -h            help          show this info
 " >&2
 }
 
-while getopts ":hbrdf:" opt; do
+read_config
+
+while getopts ":hibrdf:" opt; do
   case $opt in
     h)
       cmd="help"
       ;;
+    i)
+      cmd="info"
+      ;;
     b)
       cmd="bootloader"
-      echo "bootloader" >&2
+      echo "reset to bootloader" >&2
       ;;
     r)
       cmd="reset"
@@ -103,14 +92,15 @@ while getopts ":hbrdf:" opt; do
   esac
 done
 
-read_config
+
 
 if [ "$cmd" == "reset" ]; then
-	reset_on
-	reset_off
+	reset
 elif [ "$cmd" == "bootloader" ]; then
-	reset_on
-	reset_off
+	#TODO implement
+	reset
+elif [ "$cmd" == "info" ]; then
+	avrdude -v -c $avrm_programmer -p $avrm_chip
 elif [ "$cmd" == "flash" ]; then
 	if [ "$avrm_delay" == 0 ]; then
 		echo "avrdude -v -c $avrm_programmer -p $avrm_chip -P $avrm_port -b $avrm_baud -U flash:w:$file" >&2
