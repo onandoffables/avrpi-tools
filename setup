@@ -1,0 +1,282 @@
+#!/bin/bash
+
+BOARD="0"
+CHIP="0"
+OPTION="0"
+
+
+apt_get_everything()
+{
+#	sudo apt-get update
+#	sudo apt-get upgrade
+	sudo apt-get install -y arduino arduino-mk avr-libc binutils-avr gcc-avr avra
+#	sudo apt-get install -y gdb-avr simulavr
+	sudo apt-get install -y cmake minicom
+	sudo apt-get install -y autoconf bison flex
+}
+
+compile_from_source()
+{
+	cd install/
+
+	AVRDUDE_TGZ=avrdude-6.1.tar.gz
+
+	if [ ! -f $AVRDUDE_TGZ ]; then
+		echo "avrdude tar.gz not found. Getting it..."
+		wget http://download.savannah.gnu.org/releases/avrdude/${AVRDUDE_TGZ} || { echo "Error getting "${AVRDUDE_TGZ}; exit 1; }
+	fi
+
+	if [ -f $AVRDUDE_TGZ ]; then
+		echo "Found avrdude tar.gz: extracting..."
+		tar -xzvf ${AVRDUDE_TGZ} || { echo "Error extracting "${AVRDUDE_TGZ}; exit 1; }
+	fi
+
+	cd avrdude-6.1
+	./bootstrap
+	./configure --enable-linuxgpio=yes --prefix=/usr --sysconfdir=/etc
+	make
+	sudo make install
+	cd ..
+
+	sudo install -b -m 644 avrdude-bin/avrdude.conf '/etc'
+	sudo chmod 4755 /usr/bin/avrdude
+
+	cd ..
+}
+
+install_bin()
+{
+	echo 'installing avrdude to usr/bin'
+	sudo mkdir -p '/usr/bin'
+	sudo install -m 4755 install/avrdude-bin/avrdude '/usr/bin'
+
+	echo 'installing avrdude.conf to /etc'
+	sudo mkdir -p '/etc'
+	sudo install -b -m 644 install/avrdude-bin/avrdude.conf '/etc'
+
+	echo 'installing avrdude.1.gz to /usr/share/man/man1'
+	sudo mkdir -p '/usr/share/man/man1'
+	sudo install -m 644 install/avrdude-bin/avrdude.1.gz '/usr/share/man/man1'
+}
+
+patch_arduino()
+{
+	sudo mv /usr/share/arduino/hardware/arduino/programmers.txt /usr/share/arduino/hardware/arduino/programmers.txt.bak
+	sudo cp install/arduino/programmers.txt '/usr/share/arduino/hardware/arduino'
+
+	sudo mv /usr/share/arduino/hardware/arduino/boards.txt /usr/share/arduino/hardware/arduino/boards.txt.bak
+	sudo cp install/arduino/boards.txt '/usr/share/arduino/hardware/arduino'
+}
+
+m328_fuses()
+{
+	#from factory: (E:07, H:D9, L:62)
+	avrdude -v -c linuxgpio -p m328p -U lfuse:w:0xE7:m -U hfuse:w:0xD9:m -U efuse:w:0x07:m
+}
+
+m32u4_fuses()
+{
+	#from factory:  (E:F3, H:99, L:5E)
+	avrdude -v -c linuxgpio -p m32u4 -U lfuse:w:0xde:m -U hfuse:w:0xd8:m -U efuse:w:0xcb:m
+}
+
+test_blinky()
+{
+	cd src/test/
+	if [ "$BOARD" == "AVRM328" ]; then
+		MCU=atmega328p make flash
+	elif [ "$BOARD" == "AVRM32U4" ]; then
+		MCU=atmega32u4 make flash
+	fi
+	make clean
+	cd ../..
+}
+
+install_wiringpi()
+{
+	cd install/
+
+	if [ -d wiringPi ]; then
+		echo "wiringPi found. updating..."
+		cd wiringPi
+		git pull origin
+		./build
+		cd ..
+	else
+		echo "First time git clone: installing"
+		git clone git://git.drogon.net/wiringPi
+		cd wiringPi
+		./build
+		cd ..
+	fi
+	
+	cd ..
+}
+
+install_dfu_programmer()
+{
+	cd install/
+
+	if [ -d dfu-programmer ]; then
+		echo "dfu-programmer found. updating..."
+		cd dfu-programmer
+		git pull origin
+	else
+		echo "First time git clone: installing"
+		git clone https://github.com/dfu-programmer/dfu-programmer
+		cd dfu-programmer
+	fi
+	
+	./bootstrap.sh
+	./configure
+	make
+	sudo make install
+	cd .. #dfu-programmer
+
+	cd .. #install
+}
+
+install_avrm()
+{
+	cd install/
+
+	if [ -f /etc/avrm.cfg ]; then
+		echo "Old /etc/avrm.cfg found. Backing up..." >&2
+		sudo mv /etc/avrm.cfg /etc/avrm.cfg.bak
+	else
+		echo "No config file found. Installing avrm default config..." >&2
+	fi
+
+	echo "Please 'sudo nano /etc/avrm.cfg' and edit for your board." >&2
+	sudo cp avrm/avrm.cfg /etc/avrm.cfg
+	sudo cp avrm/avrm /usr/local/bin/avrm
+
+	cd ..
+}
+
+install_ino()
+{
+	git clone git://github.com/amperka/ino.git
+	cd ino
+
+	# sudo apt-get install python-setuptools python-serial
+	wget https://bootstrap.pypa.io/get-pip.py
+	sudo python get-pip.py
+	sudo pip install -U setuptools
+	#sudo pip install -U serial
+	sudo pip install -U configobj
+	sudo pip install -U jinja2
+	sudo pip install -U glob2
+
+	sudo make install
+	cd ..
+}
+
+banner()
+{
+	#clear
+	echo ""
+	echo "#######################################################################"
+	echo "#                                AVRM                                 #"
+	echo "#######################################################################"
+	echo ""
+}
+
+usage()
+{
+	echo ""
+	echo "  Easy install:"
+	echo "    e)    install everything in 1 easy step"
+	echo ""
+	echo "  Custom install:"
+	echo "    a)    apt-get all prerequisites"
+	echo "    p)    patch arduino"
+	echo "    w)    install wiringPi"
+	echo "    d)    install dfu-programmer"
+	echo "    c)    compile + install avrdude from source"
+	echo "    b)    install pre-compiled avrdude binary"
+	echo "    v)    install avrm tool"
+	echo "    t)    make + upload test/blinky.hex"
+	if [ "$BOARD" == "AVRM328" ]; then
+		echo "    f)    set ATmega328p fuses (with crystal)"
+	elif [ "$BOARD" == "AVRM32U4" ]; then
+		echo "    f)    set ATmega32U4 fuses (with crystal)"
+	fi
+	echo ""
+	echo "    q)    quit"
+	echo ""
+}
+
+
+banner
+
+echo "    1)    ATmega328"
+echo "    2)    ATmega32U4"
+echo ""
+
+echo "What board do you have:"
+read BOARD
+
+if [ "$BOARD" == "1" ]; then
+	BOARD="AVRM328"
+	CHIP="ATmega328p"
+elif [ "$BOARD" == "2" ]; then
+	BOARD="AVRM32U4"
+	CHIP="ATmega32U4"
+else
+	echo "Unknown board '$BOARD'"
+	exit
+fi
+
+while [ "$OPTION" != "q" ]; do
+
+	banner
+	echo "  Using board '$BOARD' ($CHIP)"
+	usage
+
+	echo "  Enter your choice:"
+	read OPTION
+	
+	if [ "$OPTION" == "e" ]; then
+		apt_get_everything
+		compile_from_source
+		#install_bin
+		patch_arduino
+		install_wiringpi
+		#install_dfu_programmer
+		install_avrm
+		if [ "$BOARD" == "AVRM328" ]; then
+			m328_fuses
+		elif [ "$BOARD" == "AVRM32U4" ]; then
+			m32u4_fuses
+		fi
+		test_blinky
+	elif [ "$OPTION" == "a" ]; then
+		apt_get_everything
+	elif [ "$OPTION" == "c" ]; then
+		compile_from_source
+	elif [ "$OPTION" == "b" ]; then
+		install_bin
+	elif [ "$OPTION" == "p" ]; then
+		patch_arduino
+	elif [ "$OPTION" == "w" ]; then
+		install_wiringpi
+	elif [ "$OPTION" == "d" ]; then
+		install_dfu_programmer
+	elif [ "$OPTION" == "v" ]; then
+		install_avrm
+	elif [ "$OPTION" == "f" ]; then
+		if [ "$BOARD" == "AVRM328" ]; then
+			m328_fuses
+		elif [ "$BOARD" == "AVRM32U4" ]; then
+			m32u4_fuses
+		fi
+	elif [ "$OPTION" == "t" ]; then
+		test_blinky
+	elif [ "$OPTION" == "q" ]; then
+		exit
+	else
+		echo "'$OPTION' is an unkown option."
+	fi
+
+done

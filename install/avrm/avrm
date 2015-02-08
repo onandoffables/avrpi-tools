@@ -1,0 +1,129 @@
+#!/bin/bash
+
+cmd="$1"
+file="$2"
+
+read_config()
+{
+	if [ -f /etc/avrm.cfg ]; then
+		echo "Reading /etc/avrm.cfg" >&2
+		source /etc/avrm.cfg
+	else
+		echo "No config file found. Please install avrm tool." >&2
+		exit 1
+	fi
+}
+
+show_readconfig()
+{
+	read_config
+	
+	echo "Make sure these settings are correct!" >&2
+	echo "If not, please 'sudo nano /etc/avrm.cfg' and edit them." >&2
+	echo >&2
+	echo board = "${avrm_board}" >&2
+	echo chip = "${avrm_chip}" >&2
+	echo speed = "${avrm_speed}" >&2
+	echo programmer = "${avrm_programmer}" >&2
+	echo port = "${avrm_port}" >&2
+	echo baud = "${avrm_baud}" >&2
+	echo delay = "${avrm_delay}" >&2
+
+	echo >&2
+}
+
+reset_spi()
+{
+	# avrdude-6.1 already handles this nicely, so there should be no need for this
+	gpio unexportall
+	for i in 7 8 9 10 11; do gpio -g mode $i in; done
+	for i in 7 8 9 10 11; do gpio -g mode $i tri; done
+
+	echo "tristate spi done" >&2
+}
+
+reset_on()
+{
+	gpio -g mode 8 out
+	gpio -g write 8 0
+	echo "reset on -> AVR in reset" >&2
+}
+
+reset_off()
+{
+	gpio -g mode 8 out
+	gpio -g write 8 1
+	echo "reset off -> AVR running" >&2
+}
+
+
+
+
+
+usage()
+{
+	echo "Usage: avrm [options] <filename>
+
+[options] is any of the following:
+  -f <file>     flash <file>  uploads <file> to AVRM board
+  -r            reset         reset to Flash start (0x0000)
+  -b            bootloader    reset to Bootloader mode (HWB/PE2 low)
+  -h            help          show this info
+" >&2
+}
+
+while getopts ":hbrdf:" opt; do
+  case $opt in
+    h)
+      cmd="help"
+      ;;
+    b)
+      cmd="bootloader"
+      echo "bootloader" >&2
+      ;;
+    r)
+      cmd="reset"
+      echo "reset" >&2
+      ;;
+    f)
+      cmd="flash"
+      file="$OPTARG"
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      cmd="$OPTARG"
+      usage
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+read_config
+
+if [ "$cmd" == "reset" ]; then
+	reset_on
+	reset_off
+elif [ "$cmd" == "bootloader" ]; then
+	reset_on
+	reset_off
+elif [ "$cmd" == "flash" ]; then
+	if [ "$avrm_delay" == 0 ]; then
+		echo "avrdude -v -c $avrm_programmer -p $avrm_chip -P $avrm_port -b $avrm_baud -U flash:w:$file" >&2
+		avrdude -v -c $avrm_programmer -p $avrm_chip -P $avrm_port -b $avrm_baud -U flash:w:$file
+	else
+		echo "avrdude -v -c $avrm_programmer -p $avrm_chip -P $avrm_port -b $avrm_baud -i $avrm_delay -U flash:w:$file" >&2
+		avrdude -v -c $avrm_programmer -p $avrm_chip -P $avrm_port -b $avrm_baud -i $avrm_delay -U flash:w:$file
+	fi
+elif [ "$cmd" == "help" ]; then
+	usage
+elif [ "$cmd" == "" ]; then
+	usage
+	show_readconfig
+else
+	usage
+fi
