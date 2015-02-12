@@ -23,7 +23,12 @@ compile_from_source()
 
 	if [ ! -f $AVRDUDE_TGZ ]; then
 		echo "avrdude tar.gz not found. Getting it..."
-		wget http://download.savannah.gnu.org/releases/avrdude/${AVRDUDE_TGZ} || { echo "Error getting "${AVRDUDE_TGZ}; exit 1; }
+		wget http://download.savannah.gnu.org/releases/avrdude/${AVRDUDE_TGZ} || { echo "Error getting "${AVRDUDE_TGZ}; }
+	fi
+
+	if [ ! -f $AVRDUDE_TGZ ]; then
+		echo "avrdude tar.gz not found. Trying another location..."
+		https://github.com/onandoffables/avrm/blob/master/install/${AVRDUDE_TGZ}?raw=true || { echo "Error getting "${AVRDUDE_TGZ}; }
 	fi
 
 	if [ -f $AVRDUDE_TGZ ]; then
@@ -210,11 +215,11 @@ usage()
 
 banner
 
-echo "    1)    ATmega328"
-echo "    2)    ATmega32U4"
+echo "    1)    AVRM328 (ATmega328 @ 8/12/16 MHz)"
+echo "    2)    AVRM32U4 (ATmega32U4 @ 8 MHz)"
 echo ""
 
-echo "What board do you have:"
+echo "What board do you have (enter 1 or 2):"
 read BOARD
 
 if [ "$BOARD" == "1" ]; then
