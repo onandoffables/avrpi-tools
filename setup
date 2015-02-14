@@ -9,7 +9,7 @@ apt_get_everything()
 {
 #	sudo apt-get update
 #	sudo apt-get upgrade
-	sudo apt-get install -y arduino arduino-mk avr-libc binutils-avr gcc-avr avra
+	sudo apt-get install -y arduino avr-libc binutils-avr gcc-avr avra
 #	sudo apt-get install -y gdb-avr simulavr
 	sudo apt-get install -y cmake minicom
 	sudo apt-get install -y autoconf bison flex
@@ -83,6 +83,13 @@ m32u4_fuses()
 {
 	#from factory:  (E:F3, H:99, L:5E)
 	avrdude -v -c linuxgpio -p m32u4 -U lfuse:w:0xde:m -U hfuse:w:0xd8:m -U efuse:w:0xcb:m
+	#avrdude -v -c linuxgpio -p m32u4 -U lfuse:w:0xde:m -U hfuse:w:0xd8:m -U efuse:w:0xfb:m
+}
+
+m32u4_fuses_hwb()
+{
+	#from factory:  (E:F3, H:99, L:5E)
+	avrdude -v -c linuxgpio -p m32u4 -U lfuse:w:0xde:m -U hfuse:w:0xd8:m -U efuse:w:0xc3:m
 }
 
 test_blinky()
@@ -206,6 +213,7 @@ usage()
 		echo "    f)    set ATmega328p fuses (with crystal)"
 	elif [ "$BOARD" == "AVRM32U4" ]; then
 		echo "    f)    set ATmega32U4 fuses (with crystal)"
+		echo "    g)    set ATmega32U4 fuses (with crystal + HWB enabled)"
 	fi
 	echo ""
 	echo "    q)    quit"
@@ -275,6 +283,10 @@ while [ "$OPTION" != "q" ]; do
 			m328_fuses
 		elif [ "$BOARD" == "AVRM32U4" ]; then
 			m32u4_fuses
+		fi
+	elif [ "$OPTION" == "g" ]; then
+		if [ "$BOARD" == "AVRM32U4" ]; then
+			m32u4_fuses_hwb
 		fi
 	elif [ "$OPTION" == "t" ]; then
 		test_blinky
