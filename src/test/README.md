@@ -7,7 +7,7 @@ To build and flash this blinky example for the AVRM328 board, run:
 
 To build and flash for the AVRM32U4 board, run:
 
-	MCU=atmega32U4 make flash
+	MCU=atmega32u4 make flash
 
 Or edit the Makefile. Uncomment one of the lines (remove the '#') somewhere around line 42:
 
