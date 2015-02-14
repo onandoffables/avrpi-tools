@@ -12,7 +12,7 @@ apt_get_everything()
 	sudo apt-get install -y arduino avr-libc binutils-avr gcc-avr avra
 #	sudo apt-get install -y gdb-avr simulavr
 	sudo apt-get install -y cmake minicom
-	sudo apt-get install -y autoconf bison flex
+	sudo apt-get install -y autoconf bison flex evtest
 }
 
 compile_from_source()
@@ -166,6 +166,22 @@ install_avrm()
 	cd ..
 }
 
+install_arduino_mk()
+{
+	# upload with 'make avrm'
+	cd src/
+	./install_Arduino-Makefile.sh
+	cd ..
+}
+
+install_LUFA()
+{
+	# upload with 'make avrdude'
+	cd src/
+	./install_LUFA-AVRM32U4.sh
+	cd ..
+}
+
 install_ino()
 {
 	git clone git://github.com/amperka/ino.git
@@ -216,6 +232,12 @@ usage()
 	fi
 	echo "    t)    make + upload test/blinky.hex"
 	echo ""
+	echo "  Extra software and projects:"
+	echo "    m)    install Arduino-Makefile"
+	if [ "$BOARD" == "AVRM32U4" ]; then
+		echo "    l)    install LUFA-AVRM32U4"
+	fi
+	echo ""
 	echo "    q)    quit"
 	echo ""
 }
@@ -264,6 +286,8 @@ while [ "$OPTION" != "q" ]; do
 			m32u4_fuses
 		fi
 		test_blinky
+
+
 	elif [ "$OPTION" == "a" ]; then
 		apt_get_everything
 	elif [ "$OPTION" == "c" ]; then
@@ -290,6 +314,14 @@ while [ "$OPTION" != "q" ]; do
 		fi
 	elif [ "$OPTION" == "t" ]; then
 		test_blinky
+
+
+	elif [ "$OPTION" == "m" ]; then
+		install_arduino_mk
+	elif [ "$OPTION" == "l" ]; then
+		install_LUFA
+
+
 	elif [ "$OPTION" == "q" ]; then
 		exit
 	else

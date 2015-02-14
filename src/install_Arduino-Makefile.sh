@@ -13,5 +13,3 @@ else
 	git checkout avrm
 	cd ..
 fi
-
-
