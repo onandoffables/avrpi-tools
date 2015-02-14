@@ -46,6 +46,29 @@ avrm12.build.variant=standard
 
 ##############################################################
 
+avrm16.name=AVRM328 ATmega328p @ 16MHz
+
+avrm16.upload.using=linuxgpio
+avrm16.upload.protocol=linuxgpio
+avrm16.upload.maximum_size=32768
+avrm16.upload.speed=57600
+avrm16.upload.disable_flushing=true
+
+avrm16.bootloader.low_fuses=0xE7
+avrm16.bootloader.high_fuses=0xDA
+avrm16.bootloader.extended_fuses=0x07
+avrm16.bootloader.path=atmega
+avrm16.bootloader.file=ATmegaBOOT_168_atmega328.hex
+avrm16.bootloader.unlock_bits=0x3F
+avrm16.bootloader.lock_bits=0x0F
+
+avrm16.build.mcu=atmega328p
+avrm16.build.f_cpu=16000000L
+avrm16.build.core=arduino
+avrm16.build.variant=standard
+
+##############################################################
+
 avrm32u4.name=AVRM32U4 ATmega32U4 @ 8MHz
 
 avrm32u4.upload.using=linuxgpio
@@ -118,7 +141,7 @@ gert168.build.variant=standard
 
 ##############################################################
 
-gertduino48.name=Gertuino ATmega44 (GPIO)
+gertduino48.name=Gertduino ATmega44 (GPIO)
 
 gertduino48.upload.using=linuxgpio
 gertduino48.upload.protocol=linuxgpio
@@ -142,7 +165,7 @@ gertduino48.build.variant=standard
 
 ##############################################################
 
-gertduino328.name=Gertuino with ATmega328 (GPIO)
+gertduino328.name=Gertduino with ATmega328 (GPIO)
 
 gertduino328.upload.using=linuxgpio
 gertduino328.upload.protocol=linuxgpio

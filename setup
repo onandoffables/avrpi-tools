@@ -96,9 +96,9 @@ test_blinky()
 {
 	cd src/test/
 	if [ "$BOARD" == "AVRM328" ]; then
-		MCU=atmega328p make flash
+		BRD=1 make flash
 	elif [ "$BOARD" == "AVRM32U4" ]; then
-		MCU=atmega32u4 make flash
+		BRD=2 make flash
 	fi
 	make clean
 	cd ../..
@@ -208,13 +208,13 @@ usage()
 	echo "    c)    compile + install avrdude from source"
 	echo "    b)    install pre-compiled avrdude binary"
 	echo "    v)    install avrm tool"
-	echo "    t)    make + upload test/blinky.hex"
 	if [ "$BOARD" == "AVRM328" ]; then
 		echo "    f)    set ATmega328p fuses (with crystal)"
 	elif [ "$BOARD" == "AVRM32U4" ]; then
 		echo "    f)    set ATmega32U4 fuses (with crystal)"
 		echo "    g)    set ATmega32U4 fuses (with crystal + HWB enabled)"
 	fi
+	echo "    t)    make + upload test/blinky.hex"
 	echo ""
 	echo "    q)    quit"
 	echo ""

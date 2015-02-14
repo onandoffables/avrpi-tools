@@ -40,8 +40,12 @@
 
 
 # MCU name
-#MCU = atmega328p
-#MCU = atmega32u4
+ifeq ($(BRD),1)
+  MCU = atmega328p
+endif
+ifeq ($(BRD),2)
+  MCU = atmega32u4
+endif
 
 
 # Processor frequency.
@@ -103,7 +107,7 @@ CSTANDARD = -std=gnu99
 
 
 # Place -D or -U options here
-CDEFS = -DF_CPU=$(F_CPU)UL
+CDEFS = -DF_CPU=$(F_CPU)UL -DBRD=$(BRD) -DMCU=$(MCU)
 
 
 # Place -I options here
