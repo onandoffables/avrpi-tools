@@ -12,7 +12,7 @@ apt_get_everything()
 	sudo apt-get install -y arduino avr-libc binutils-avr gcc-avr avra
 #	sudo apt-get install -y gdb-avr simulavr
 	sudo apt-get install -y cmake minicom
-	sudo apt-get install -y autoconf bison flex evtest
+	sudo apt-get install -y autoconf bison flex bc evtest
 }
 
 compile_from_source()

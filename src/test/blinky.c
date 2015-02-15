@@ -25,9 +25,9 @@ int main(void)
 
 	for (;;) {
 		PRT ^= (LED); // invert LED pin
-		_delay_ms(500);
+		_delay_ms(100);
 		PRT ^= (LED); // invert LED pin
-		_delay_ms(500);
+		_delay_ms(900);
 	}
 
 	return 0;
