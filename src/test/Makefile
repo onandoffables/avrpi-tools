@@ -40,6 +40,9 @@
 
 
 # MCU name
+ifeq ($(BRD),0)
+  MCU = atmega168p
+endif
 ifeq ($(BRD),1)
   MCU = atmega328p
 endif

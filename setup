@@ -73,6 +73,12 @@ patch_arduino()
 	sudo cp install/arduino/boards.txt '/usr/share/arduino/hardware/arduino'
 }
 
+m168_fuses()
+{
+	#from factory: (E:F9, H:DF, L:62)
+	avrdude -v -c linuxgpio -p m328p -U lfuse:w:0xE7:m -U hfuse:w:0xDF:m -U efuse:w:0x00:m
+}
+
 m328_fuses()
 {
 	#from factory: (E:07, H:D9, L:62)
@@ -95,7 +101,9 @@ m32u4_fuses_hwb()
 test_blinky()
 {
 	cd src/test/
-	if [ "$BOARD" == "AVRM328" ]; then
+	if [ "$BOARD" == "AVRM168" ]; then
+		BRD=0 make flash
+	elif [ "$BOARD" == "AVRM328" ]; then
 		BRD=1 make flash
 	elif [ "$BOARD" == "AVRM32U4" ]; then
 		BRD=2 make flash
@@ -232,7 +240,9 @@ usage()
 	echo "    c)    compile + install avrdude from source"
 	echo "    b)    install pre-compiled avrdude binary"
 	echo "    v)    install avrm tool"
-	if [ "$BOARD" == "AVRM328" ]; then
+	if [ "$BOARD" == "AVRM168" ]; then
+		echo "    f)    set ATmega168p fuses (with crystal)"
+	elif [ "$BOARD" == "AVRM328" ]; then
 		echo "    f)    set ATmega328p fuses (with crystal)"
 	elif [ "$BOARD" == "AVRM32U4" ]; then
 		echo "    f)    set ATmega32U4 fuses (with crystal)"
@@ -254,22 +264,27 @@ usage()
 
 banner
 
-echo "    1)    AVRM328 (ATmega328 @ 8/12/16 MHz)"
-echo "            (also choose '1' if you have a Gertboard or Gertduino)"
+#echo "    0)    AVRM168 (ATmega168p @ 8/12/16 MHz)"
+echo "    1)    AVRM328 (ATmega328p @ 8/12/16 MHz)"
 echo "    2)    AVRM32U4 (ATmega32U4 @ 8 MHz)"
+#echo "    3)    Gertboard (ATmega328p @ 12 MHz)"
+#echo "    4)    Gertduino (ATmega328p @ 16 MHz)"
 echo ""
 
-echo "What board do you have (enter 1 or 2):"
-read BOARD
+echo "What board do you have:"
+read BOARDNUM
 
-if [ "$BOARD" == "1" ]; then
+if [ "$BOARDNUM" == "0" ]; then
+	BOARD="AVRM168"
+	CHIP="ATmega168p"
+elif [ "$BOARDNUM" == "1" ]; then
 	BOARD="AVRM328"
 	CHIP="ATmega328p"
-elif [ "$BOARD" == "2" ]; then
+elif [ "$BOARDNUM" == "2" ]; then
 	BOARD="AVRM32U4"
 	CHIP="ATmega32U4"
 else
-	echo "Unknown board '$BOARD'"
+	echo "Error. Please enter the number of the board."
 	exit
 fi
 
@@ -290,7 +305,9 @@ while [ "$OPTION" != "q" ]; do
 		install_wiringpi
 		#install_dfu_programmer
 		install_avrm
-		if [ "$BOARD" == "AVRM328" ]; then
+		if [ "$BOARD" == "AVRM168" ]; then
+			m168_fuses
+		elif [ "$BOARD" == "AVRM328" ]; then
 			m328_fuses
 		elif [ "$BOARD" == "AVRM32U4" ]; then
 			m32u4_fuses
@@ -313,7 +330,9 @@ while [ "$OPTION" != "q" ]; do
 	elif [ "$OPTION" == "v" ]; then
 		install_avrm
 	elif [ "$OPTION" == "f" ]; then
-		if [ "$BOARD" == "AVRM328" ]; then
+		if [ "$BOARD" == "AVRM168" ]; then
+			m168_fuses
+		elif [ "$BOARD" == "AVRM328" ]; then
 			m328_fuses
 		elif [ "$BOARD" == "AVRM32U4" ]; then
 			m32u4_fuses

@@ -100,6 +100,7 @@ elif [ "$cmd" == "bootloader" ]; then
 	#TODO implement
 	reset
 elif [ "$cmd" == "info" ]; then
+	echo "avrdude -v -c $avrm_programmer -p $avrm_chip" >&2
 	avrdude -v -c $avrm_programmer -p $avrm_chip
 elif [ "$cmd" == "flash" ]; then
 	if [ "$avrm_delay" == 0 ]; then
