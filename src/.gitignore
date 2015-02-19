@@ -1,2 +1,3 @@
-Arduino-Makefile/
-LUFA-AVRM32U4/
+Arduino-Makefile
+arduino-cmake
+LUFA-AVRM32U4
