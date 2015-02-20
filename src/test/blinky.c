@@ -1,21 +1,19 @@
 // compile and upload with:
-// BRD=1 make flash
-// or
-// BRD=2 make flash
+// BRD=x make flash
+// where x = 0,1,2
 #include <avr/io.h>
 #include <util/delay.h>
 
-// ATmega328p
-#if BRD == 1
-	#define LED    (1 << 5)
-	#define DIR    DDRB
-	#define PRT    PORTB
-#endif
 // ATmega32u4
 #if BRD == 2
 	#define LED    (1 << 7)
 	#define DIR    DDRC
 	#define PRT    PORTC
+#else
+// ATmega168p + ATmega328p
+	#define LED    (1 << 5)
+	#define DIR    DDRB
+	#define PRT    PORTB
 #endif
 
 int main(void)
