@@ -5,7 +5,7 @@
 #include <util/delay.h>
 
 // ATmega32u4
-#if BRD == 2
+#if BRD == 4
 	#define LED    (1 << 7)
 	#define DIR    DDRC
 	#define PRT    PORTC
