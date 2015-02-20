@@ -50,8 +50,8 @@ usage()
 [options] is any of the following:
   -f <file>     flash <file>  uploads <file> to AVRM board
   -i            info          show info about chip
-  -r            reset         reset to Flash start (0x0000)
-  -b            bootloader    reset to Bootloader mode (HWB/PE2 low)
+  -r            reset         reset AVR chip
+  -b            bootloader    enter bootloader mode (HWB/PE2 low)
   -h            help          show this info
 " >&2
 }

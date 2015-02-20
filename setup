@@ -2,6 +2,7 @@
 
 BOARD="0"
 CHIP="0"
+SPEED="0"
 OPTION="0"
 
 
@@ -158,20 +159,79 @@ install_dfu_programmer()
 
 install_avrm()
 {
-	cd install/
+	cd install/avrm
 
 	if [ -f /etc/avrm.cfg ]; then
 		echo "Old /etc/avrm.cfg found. Backing up..." >&2
 		sudo mv /etc/avrm.cfg /etc/avrm.cfg.bak
 	else
-		echo "No config file found. Installing avrm default config..." >&2
+		echo "/etc/avrm.cfg not found. Installing avrm default config..." >&2
+	fi
+	
+	#local avrm.cfg
+	if [ -f avrm.cfg ]; then
+		echo "Existing local config file found. Removing and creating new one..." >&2
+		rm avrm.cfg
+	else
+		echo "No local config file found. Creating new one..." >&2
 	fi
 
-	echo "Please 'sudo nano /etc/avrm.cfg' and edit for your board." >&2
-	sudo cp avrm/avrm.cfg /etc/avrm.cfg
-	sudo cp avrm/avrm /usr/local/bin/avrm
 
-	cd ..
+	#avrm_board
+	echo "#avrm_board can be avrm168 avrm328, avrm32u4, gertboard, gertduino" >> avrm.cfg
+	if [ "$BOARD" == "AVRM168" ]; then
+		echo "avrm_board=avrm168" >> avrm.cfg
+	elif [ "$BOARD" == "AVRM328" ]; then
+		echo "avrm_board=avrm328" >> avrm.cfg
+	elif [ "$BOARD" == "AVRM32U4" ]; then
+		echo "avrm_board=avrm32u4" >> avrm.cfg
+	fi
+	echo "" >> avrm.cfg
+
+	#avrm_chip
+	echo "#avrm_chip can be atmega168p, atmega328p, atmega32u4" >> avrm.cfg
+	if [ "$CHIP" == "ATmega168p" ]; then
+		echo "avrm_chip=avrm168" >> avrm.cfg
+	elif [ "$CHIP" == "ATmega328p" ]; then
+		echo "avrm_chip=atmega328p" >> avrm.cfg
+	elif [ "$CHIP" == "ATmega32U4" ]; then
+		echo "avrm_chip=atmega32u4" >> avrm.cfg
+	fi
+	echo "" >> avrm.cfg
+
+	#avrm_speed
+	echo "#avrm_speed 8000000, 12000000, 16000000" >> avrm.cfg
+	echo "avrm_speed=$SPEED" >> avrm.cfg
+	echo "" >> avrm.cfg
+
+	#avrm_programmer
+	echo "#avrm_programmer linuxgpio, gpio" >> avrm.cfg
+	echo "avrm_programmer=linuxgpio" >> avrm.cfg
+	echo "" >> avrm.cfg
+
+	#avrm_port
+	echo "#avrm_port /dev/ttyAMA0, /dev/ttyUSB0, /dev/ttyACM0" >> avrm.cfg
+	echo "avrm_port=/dev/ttyAMA0" >> avrm.cfg
+	echo "" >> avrm.cfg
+
+	#avrm_baud
+	echo "#avrm_baud 115200, 57600, 38400" >> avrm.cfg
+	echo "avrm_baud=115200" >> avrm.cfg
+	echo "" >> avrm.cfg
+
+	#avrm_delay
+	echo "#avrm_delay 0, 5 20 (isp clock delay)" >> avrm.cfg
+	echo "#anything other than 0 adds -i avrdude option" >> avrm.cfg
+	echo "avrm_delay=5" >> avrm.cfg
+	#echo "" >> avrm.cfg
+
+
+	sudo cp avrm.cfg /etc/avrm.cfg
+	sudo cp avrm /usr/local/bin/avrm
+	
+	echo "Please 'sudo nano /etc/avrm.cfg' and edit for your board." >&2
+
+	cd ../..
 }
 
 install_arduino_mk()
@@ -214,6 +274,21 @@ install_ino()
 
 	sudo make install
 	cd ..
+}
+
+do_fuses()
+{
+	if [ "$BOARD" == "AVRM168" ]; then
+		m168_fuses
+	elif [ "$BOARD" == "AVRM328" ]; then
+		m328_fuses
+	elif [ "$BOARD" == "AVRM32U4" ]; then
+		m32u4_fuses
+	elif [ "$BOARD" == "gertboard" ]; then
+		m328_fuses
+	elif [ "$BOARD" == "gertduino" ]; then
+		m328_fuses
+	fi
 }
 
 banner()
@@ -265,10 +340,17 @@ usage()
 banner
 
 #echo "    0)    AVRM168 (ATmega168p @ 8/12/16 MHz)"
-echo "    1)    AVRM328 (ATmega328p @ 8/12/16 MHz)"
-echo "    2)    AVRM32U4 (ATmega32U4 @ 8 MHz)"
-#echo "    3)    Gertboard (ATmega328p @ 12 MHz)"
-#echo "    4)    Gertduino (ATmega328p @ 16 MHz)"
+echo "  AVRM328 (ATmega328p)"
+echo "    1)    AVRM328 @ 8MHz"
+echo "    2)    AVRM328 @ 12MHz"
+echo "    3)    AVRM328 @ 16MHz"
+echo ""
+echo "  AVRM32U4 (ATmega32U4)"
+echo "    4)    AVRM32U4 (ATmega32U4 @ 8 MHz)"
+echo ""
+echo "  Gertware (ATmega328p)"
+echo "    5)    Gertboard (ATmega328p @ 12 MHz)"
+echo "    6)    Gertduino (ATmega328p @ 16 MHz)"
 echo ""
 
 echo "What board do you have:"
@@ -277,16 +359,36 @@ read BOARDNUM
 if [ "$BOARDNUM" == "0" ]; then
 	BOARD="AVRM168"
 	CHIP="ATmega168p"
+	SPEED="8000000"
 elif [ "$BOARDNUM" == "1" ]; then
 	BOARD="AVRM328"
 	CHIP="ATmega328p"
+	SPEED="8000000"
 elif [ "$BOARDNUM" == "2" ]; then
+	BOARD="AVRM328"
+	CHIP="ATmega328p"
+	SPEED="12000000"
+elif [ "$BOARDNUM" == "3" ]; then
+	BOARD="AVRM328"
+	CHIP="ATmega328p"
+	SPEED="16000000"
+elif [ "$BOARDNUM" == "4" ]; then
 	BOARD="AVRM32U4"
 	CHIP="ATmega32U4"
+	SPEED="8000000"
+elif [ "$BOARDNUM" == "5" ]; then
+	BOARD="gertboard"
+	CHIP="ATmega328p"
+	SPEED="12000000"
+elif [ "$BOARDNUM" == "6" ]; then
+	BOARD="gertduino"
+	CHIP="ATmega328p"
+	SPEED="16000000"
 else
 	echo "Error. Please enter the number of the board."
 	exit
 fi
+
 
 while [ "$OPTION" != "q" ]; do
 
@@ -305,13 +407,7 @@ while [ "$OPTION" != "q" ]; do
 		install_wiringpi
 		#install_dfu_programmer
 		install_avrm
-		if [ "$BOARD" == "AVRM168" ]; then
-			m168_fuses
-		elif [ "$BOARD" == "AVRM328" ]; then
-			m328_fuses
-		elif [ "$BOARD" == "AVRM32U4" ]; then
-			m32u4_fuses
-		fi
+		do_fuses
 		test_blinky
 
 
@@ -330,13 +426,7 @@ while [ "$OPTION" != "q" ]; do
 	elif [ "$OPTION" == "v" ]; then
 		install_avrm
 	elif [ "$OPTION" == "f" ]; then
-		if [ "$BOARD" == "AVRM168" ]; then
-			m168_fuses
-		elif [ "$BOARD" == "AVRM328" ]; then
-			m328_fuses
-		elif [ "$BOARD" == "AVRM32U4" ]; then
-			m32u4_fuses
-		fi
+		do_fuses
 	elif [ "$OPTION" == "g" ]; then
 		if [ "$BOARD" == "AVRM32U4" ]; then
 			m32u4_fuses_hwb
