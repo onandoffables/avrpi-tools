@@ -231,6 +231,9 @@ install_avrm()
 	sudo cp avrm /usr/local/bin/avrm
 	
 	echo "Please 'sudo nano /etc/avrm.cfg' and edit for your board." >&2
+	
+	echo "Cleaning up local avrm.cfg..." >&2
+	rm avrm.cfg
 
 	cd ../..
 }
