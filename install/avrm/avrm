@@ -39,7 +39,12 @@ reset()
 	gpio -g write 8 0
 	sleep 1
 	gpio -g write 8 1
-	gpio -g mode 8 in
+	if [ "$avrm_board" == "gertduino" ]; then
+		#do nothing (keep as output and high)
+		gpio -g mode 8 out
+	else
+		gpio -g mode 8 in
+	fi
 }
 
 

@@ -109,9 +109,21 @@ test_blinky()
 	if [ "$BOARD" == "AVRM168" ]; then
 		BRD=0 make flash
 	elif [ "$BOARD" == "AVRM328" ]; then
-		BRD=1 make flash
+		if [ "$SPEED" == "12000000" ]; then
+			BRD=2 make flash
+		elif [ "$SPEED" == "16000000" ]; then
+			BRD=3 make flash
+		else
+			# 8000000
+			BRD=1 make flash
+		fi
 	elif [ "$BOARD" == "AVRM32U4" ]; then
-		BRD=2 make flash
+		BRD=4 make flash
+	elif [ "$BOARD" == "gertboard" ]; then
+		BRD=5 make flash
+	elif [ "$BOARD" == "gertduino" ]; then
+		BRD=6 make flash
+		avrm -r
 	fi
 	make clean
 	cd ../..
@@ -189,6 +201,10 @@ install_avrm()
 		echo "avrm_board=avrm328" >> avrm.cfg
 	elif [ "$BOARD" == "AVRM32U4" ]; then
 		echo "avrm_board=avrm32u4" >> avrm.cfg
+	elif [ "$BOARD" == "gertboard" ]; then
+		echo "avrm_board=gertboard" >> avrm.cfg
+	elif [ "$BOARD" == "gertduino" ]; then
+		echo "avrm_board=gertduino" >> avrm.cfg
 	fi
 	echo "" >> avrm.cfg
 
@@ -200,6 +216,8 @@ install_avrm()
 		echo "avrm_chip=atmega328p" >> avrm.cfg
 	elif [ "$CHIP" == "ATmega32U4" ]; then
 		echo "avrm_chip=atmega32u4" >> avrm.cfg
+	else
+		echo "avrm_chip=atmega328p" >> avrm.cfg
 	fi
 	echo "" >> avrm.cfg
 
@@ -394,6 +412,8 @@ else
 	exit
 fi
 
+# write board settings to config file
+install_avrm
 
 while [ "$OPTION" != "q" ]; do
 

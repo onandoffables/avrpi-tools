@@ -38,6 +38,14 @@
 # To rebuild project do "make clean" then "make all".
 #----------------------------------------------------------------------------
 
+# Processor frequency.
+#     This will define a symbol, F_CPU, in all source code files equal to the 
+#     processor frequency. You can then use this symbol in your source code to 
+#     calculate timings. Do NOT tack on a 'UL' at the end, this will be done
+#     automatically to create a 32-bit value in your source code.
+F_CPU = 8000000
+
+MCU = atmega328p
 
 # MCU name
 ifeq ($(BRD),0)
@@ -46,17 +54,20 @@ endif
 ifeq ($(BRD),1)
   MCU = atmega328p
 endif
-ifeq ($(BRD),2)
+ifeq ($(BRD),4)
   MCU = atmega32u4
+endif
+ifeq ($(BRD),5)
+  MCU = atmega328p
+  F_CPU = 12000000
+endif
+ifeq ($(BRD),6)
+  MCU = atmega328p
+  F_CPU = 16000000
 endif
 
 
-# Processor frequency.
-#     This will define a symbol, F_CPU, in all source code files equal to the 
-#     processor frequency. You can then use this symbol in your source code to 
-#     calculate timings. Do NOT tack on a 'UL' at the end, this will be done
-#     automatically to create a 32-bit value in your source code.
-F_CPU = 8000000
+
 
 
 # Output format. (can be srec, ihex, binary)
