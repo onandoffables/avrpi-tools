@@ -73,6 +73,9 @@ patch_arduino()
 
 	sudo mv /usr/share/arduino/hardware/arduino/boards.txt /usr/share/arduino/hardware/arduino/boards.txt.bak
 	sudo cp install/arduino/boards.txt '/usr/share/arduino/hardware/arduino'
+
+	sudo mv /usr/share/arduino/hardware/arduino/cores/arduino/USBCore.cpp /usr/share/arduino/hardware/arduino/cores/arduino/USBCore.cpp.bak
+	sudo cp install/arduino/USBCore.cpp '/usr/share/arduino/hardware/arduino/cores/arduino/USBCore.cpp'
 }
 
 m168_fuses()

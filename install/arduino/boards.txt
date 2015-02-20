@@ -89,7 +89,7 @@ avrm32u4.build.mcu=atmega32u4
 avrm32u4.build.f_cpu=8000000L
 avrm32u4.build.vid=0x2341
 avrm32u4.build.pid=0x8036
-avrm32u4.build.core=arduino
+avrm32u4.build.core=arduino:arduino
 avrm32u4.build.variant=leonardo
 
 ##############################################################
