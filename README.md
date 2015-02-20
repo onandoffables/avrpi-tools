@@ -1,33 +1,75 @@
 AVRM setup
 ==========
 
+install
+-------
+
+To install the AVRM setup tool:
+
+	cd
+	git clone https://github.com/onandoffables/avrm
+	cd avrm
+	./setup
+
 setup
 -----
 
-	pi@raspberrypi ~/avrm $ ./setup
+After you run ./setup, a menu appears. First choose which board you have.
+
 	#######################################################################
 	#                                AVRM                                 #
 	#######################################################################
 
-	  Using board 'AVRM328' (ATmega328p)
+	  AVRM328
+		1)    ATmega328p @ 8MHz
+		2)    ATmega328p @ 12MHz
+		3)    ATmega328p @ 16MHz (overclocked)
 
-	  Easy install:
-		e)    install everything in 1 easy step
+	  AVRM32U4
+		4)    ATmega32U4 @ 8 MHz
+
+	  Gertware (ATmega328p)
+		5)    Gertboard (ATmega328p @ 12 MHz)
+		6)    Gertduino (ATmega328p @ 16 MHz)
+
+	What board do you have:
+
+Choose the number of the board (for example, 4) and press enter.
+
+	#######################################################################
+	#                                AVRM                                 #
+	#######################################################################
+
+	  Using a board with a ATmega32U4
+
+	  Install everything in 1 easy step:
+		e)    use pre-compiled avrdude (like a noob)
+		z)    compile + install avrdude from source (like a pro)
 
 	  Custom install:
 		a)    apt-get all prerequisites
 		p)    patch arduino
 		w)    install wiringPi
 		d)    install dfu-programmer
-		c)    compile + install avrdude from source
 		b)    install pre-compiled avrdude binary
+		c)    compile + install avrdude from source
 		v)    install avrm tool
+		f)    set ATmega32U4 fuses (with crystal)
+		g)    set ATmega32U4 fuses (with crystal + HWB enabled)
 		t)    make + upload test/blinky.hex
-		f)    set ATmega328p fuses (with crystal)
+
+	  Extra software and projects:
+		m)    install Arduino-Makefile
+		s)    install arduino-cmake
+		l)    install LUFA-AVRM32U4
 
 		q)    quit
 
 	  Enter your choice:
+
+You have the option of installing everything in 1 easy step. Choose 'e' or 'z' for this. Using the pre-compiled version of avrdude is the fastest, but you can also compile from source. This will only take a couple of minutes anyway.
+
+Use the 'custom install' options to tweak the installation process. For example, if you only want to install linuxgpio-enabled avrdude without all the Arduino cruft.
 
 avrdude-6.1-linuxgpio
 ---------------------
@@ -37,7 +79,7 @@ This compiles and installs avrdude from source, enabling avrdude to bitbang the 
 
 Prerequisite to build avrdude from source (choose 'apt-get all prerequisites' to install this):
 
-	sudo apt-get install autoconf bison flex
+	sudo apt-get install libusb-1.0-0-dev libusb-dev libftdi-dev autoconf bison flex
 
 connections
 -----------
