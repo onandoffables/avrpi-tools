@@ -179,7 +179,7 @@ install_avrm()
 
 
 	#avrm_board
-	echo "#avrm_board can be avrm168 avrm328, avrm32u4, gertboard, gertduino" >> avrm.cfg
+	echo "#avrm_board can be avrm168, avrm328, avrm32u4, gertboard, gertduino" >> avrm.cfg
 	if [ "$BOARD" == "AVRM168" ]; then
 		echo "avrm_board=avrm168" >> avrm.cfg
 	elif [ "$BOARD" == "AVRM328" ]; then
@@ -216,7 +216,7 @@ install_avrm()
 	echo "" >> avrm.cfg
 
 	#avrm_baud
-	echo "#avrm_baud 115200, 57600, 38400" >> avrm.cfg
+	echo "#avrm_baud 9600, 38400, 57600, 115200 " >> avrm.cfg
 	echo "avrm_baud=115200" >> avrm.cfg
 	echo "" >> avrm.cfg
 

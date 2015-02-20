@@ -48,17 +48,19 @@ usage()
 	echo "Usage: avrm [options] <filename>
 
 [options] is any of the following:
+  -c            config        edit avrm config file
   -f <file>     flash <file>  uploads <file> to AVRM board
   -i            info          show info about chip
   -r            reset         reset AVR chip
   -b            bootloader    enter bootloader mode (HWB/PE2 low)
+  -m            minicom       start minicom on ${avrm_port} @ ${avrm_baud}
   -h            help          show this info
 " >&2
 }
 
 read_config
 
-while getopts ":hibrdf:" opt; do
+while getopts ":hibcmrdf:" opt; do
   case $opt in
     h)
       cmd="help"
@@ -69,6 +71,14 @@ while getopts ":hibrdf:" opt; do
     b)
       cmd="bootloader"
       echo "reset to bootloader" >&2
+      ;;
+    c)
+      cmd="config"
+      echo "configure avrm" >&2
+      ;;
+    m)
+      cmd="minicom"
+      echo "start minicom" >&2
       ;;
     r)
       cmd="reset"
@@ -99,6 +109,8 @@ if [ "$cmd" == "reset" ]; then
 elif [ "$cmd" == "bootloader" ]; then
 	#TODO implement
 	reset
+elif [ "$cmd" == "config" ]; then
+	sudo nano /etc/avrm.cfg
 elif [ "$cmd" == "info" ]; then
 	echo "avrdude -v -c $avrm_programmer -p $avrm_chip" >&2
 	avrdude -v -c $avrm_programmer -p $avrm_chip
@@ -110,6 +122,8 @@ elif [ "$cmd" == "flash" ]; then
 		echo "avrdude -v -c $avrm_programmer -p $avrm_chip -P $avrm_port -b $avrm_baud -i $avrm_delay -U flash:w:$file" >&2
 		avrdude -v -c $avrm_programmer -p $avrm_chip -P $avrm_port -b $avrm_baud -i $avrm_delay -U flash:w:$file
 	fi
+elif [ "$cmd" == "minicom" ]; then
+	minicom -D ${avrm_port} -b ${avrm_baud}
 elif [ "$cmd" == "help" ]; then
 	usage
 elif [ "$cmd" == "" ]; then
