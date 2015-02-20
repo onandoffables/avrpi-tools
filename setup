@@ -4,6 +4,7 @@ BOARD="0"
 CHIP="0"
 SPEED="0"
 OPTION="0"
+STYLE="0"
 
 
 apt_get_everything()
@@ -12,8 +13,8 @@ apt_get_everything()
 #	sudo apt-get upgrade
 	sudo apt-get install -y arduino avr-libc binutils-avr gcc-avr avra
 #	sudo apt-get install -y gdb-avr simulavr
-	sudo apt-get install -y cmake minicom
-	sudo apt-get install -y libusb-1.0-0-dev libusb-dev libftdi-dev autoconf bison flex bc evtest
+	sudo apt-get install -y cmake minicom bc evtest
+	sudo apt-get install -y libusb-1.0-0-dev libusb-dev libftdi-dev autoconf bison flex
 }
 
 compile_from_source()
@@ -258,24 +259,6 @@ install_LUFA()
 	cd ..
 }
 
-install_ino()
-{
-	git clone git://github.com/amperka/ino.git
-	cd ino
-
-	# sudo apt-get install python-setuptools python-serial
-	wget https://bootstrap.pypa.io/get-pip.py
-	sudo python get-pip.py
-	sudo pip install -U setuptools
-	#sudo pip install -U serial
-	sudo pip install -U configobj
-	sudo pip install -U jinja2
-	sudo pip install -U glob2
-
-	sudo make install
-	cd ..
-}
-
 do_fuses()
 {
 	if [ "$BOARD" == "AVRM168" ]; then
@@ -304,16 +287,17 @@ banner()
 usage()
 {
 	echo ""
-	echo "  Easy install:"
-	echo "    e)    install everything in 1 easy step"
+	echo "  Install everything in 1 easy step:"
+	echo "    e)    use pre-compiled avrdude (like a noob)"
+	echo "    z)    compile + install avrdude from source (like a pro)"
 	echo ""
 	echo "  Custom install:"
 	echo "    a)    apt-get all prerequisites"
 	echo "    p)    patch arduino"
 	echo "    w)    install wiringPi"
 	echo "    d)    install dfu-programmer"
-	echo "    c)    compile + install avrdude from source"
 	echo "    b)    install pre-compiled avrdude binary"
+	echo "    c)    compile + install avrdude from source"
 	echo "    v)    install avrm tool"
 	if [ "$BOARD" == "AVRM168" ]; then
 		echo "    f)    set ATmega168p fuses (with crystal)"
@@ -336,17 +320,32 @@ usage()
 	echo ""
 }
 
+install_everything()
+{
+	apt_get_everything
+	if [ "$STYLE" == "noob" ]; then
+		install_bin
+	elif [ "$STYLE" == "pro" ]; then
+		compile_from_source
+	fi
+	patch_arduino
+	install_wiringpi
+	#install_dfu_programmer
+	install_avrm
+	do_fuses
+	test_blinky
+}
 
 banner
 
 #echo "    0)    AVRM168 (ATmega168p @ 8/12/16 MHz)"
-echo "  AVRM328 (ATmega328p)"
-echo "    1)    AVRM328 @ 8MHz"
-echo "    2)    AVRM328 @ 12MHz"
-echo "    3)    AVRM328 @ 16MHz"
+echo "  AVRM328"
+echo "    1)    ATmega328p @ 8MHz"
+echo "    2)    ATmega328p @ 12MHz"
+echo "    3)    ATmega328p @ 16MHz (overclocked)"
 echo ""
-echo "  AVRM32U4 (ATmega32U4)"
-echo "    4)    AVRM32U4 (ATmega32U4 @ 8 MHz)"
+echo "  AVRM32U4"
+echo "    4)    ATmega32U4 @ 8 MHz"
 echo ""
 echo "  Gertware (ATmega328p)"
 echo "    5)    Gertboard (ATmega328p @ 12 MHz)"
@@ -400,16 +399,11 @@ while [ "$OPTION" != "q" ]; do
 	read OPTION
 	
 	if [ "$OPTION" == "e" ]; then
-		apt_get_everything
-		compile_from_source
-		#install_bin
-		patch_arduino
-		install_wiringpi
-		#install_dfu_programmer
-		install_avrm
-		do_fuses
-		test_blinky
-
+		STYLE="noob"
+		install_everything
+	elif [ "$OPTION" == "z" ]; then
+		STYLE="pro"
+		install_everything
 
 	elif [ "$OPTION" == "a" ]; then
 		apt_get_everything
