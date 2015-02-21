@@ -186,12 +186,9 @@ install_avrm()
 	
 	#local avrm.cfg
 	if [ -f avrm.cfg ]; then
-		echo "Existing local config file found. Removing and creating new one..." >&2
+		#echo "Existing local config file found. Removing and creating new one..." >&2
 		rm avrm.cfg
-	else
-		echo "No local config file found. Creating new one..." >&2
 	fi
-
 
 	#avrm_board
 	echo "#avrm_board can be avrm168, avrm328, avrm32u4, gertboard, gertduino" >> avrm.cfg
@@ -207,7 +204,7 @@ install_avrm()
 		echo "avrm_board=gertduino" >> avrm.cfg
 	fi
 	echo "" >> avrm.cfg
-
+	
 	#avrm_chip
 	echo "#avrm_chip can be atmega168p, atmega328p, atmega32u4" >> avrm.cfg
 	if [ "$CHIP" == "ATmega168p" ]; then
@@ -220,42 +217,47 @@ install_avrm()
 		echo "avrm_chip=atmega328p" >> avrm.cfg
 	fi
 	echo "" >> avrm.cfg
-
+	
 	#avrm_speed
 	echo "#avrm_speed 8000000, 12000000, 16000000" >> avrm.cfg
 	echo "avrm_speed=$SPEED" >> avrm.cfg
 	echo "" >> avrm.cfg
-
+	
 	#avrm_programmer
 	echo "#avrm_programmer linuxgpio, gpio" >> avrm.cfg
 	echo "avrm_programmer=linuxgpio" >> avrm.cfg
 	echo "" >> avrm.cfg
-
+	
 	#avrm_port
 	echo "#avrm_port /dev/ttyAMA0, /dev/ttyUSB0, /dev/ttyACM0" >> avrm.cfg
-	echo "avrm_port=/dev/ttyAMA0" >> avrm.cfg
+	if [ "$CHIP" == "ATmega32U4" ]; then
+		echo "avrm_port=/dev/ttyACM0" >> avrm.cfg
+	else
+		echo "avrm_port=/dev/ttyAMA0" >> avrm.cfg
+	fi
 	echo "" >> avrm.cfg
-
+	
 	#avrm_baud
 	echo "#avrm_baud 9600, 38400, 57600, 115200 " >> avrm.cfg
-	echo "avrm_baud=115200" >> avrm.cfg
+	echo "avrm_baud=9600" >> avrm.cfg
 	echo "" >> avrm.cfg
-
+	
 	#avrm_delay
 	echo "#avrm_delay 0, 5 20 (isp clock delay)" >> avrm.cfg
 	echo "#anything other than 0 adds -i avrdude option" >> avrm.cfg
 	echo "avrm_delay=5" >> avrm.cfg
 	#echo "" >> avrm.cfg
-
-
+	
+	echo "Copy new avrm.cfg to /etc/avrm.cfg" >&2
 	sudo cp avrm.cfg /etc/avrm.cfg
+	echo "Copy avrm to /usr/local/bin/avrm" >&2
 	sudo cp avrm /usr/local/bin/avrm
 	
-	echo "Please 'sudo nano /etc/avrm.cfg' and edit for your board." >&2
+	avrm -s
 	
 	echo "Cleaning up local avrm.cfg..." >&2
 	rm avrm.cfg
-
+	
 	cd ../..
 }
 
@@ -412,8 +414,6 @@ else
 	exit
 fi
 
-# write board settings to config file
-install_avrm
 
 while [ "$OPTION" != "q" ]; do
 

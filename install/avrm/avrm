@@ -6,7 +6,7 @@ file="$2"
 read_config()
 {
 	if [ -f /etc/avrm.cfg ]; then
-		echo "Reading /etc/avrm.cfg" >&2
+		#echo "Reading /etc/avrm.cfg" >&2
 		source /etc/avrm.cfg
 	else
 		echo "No config file found. Please install avrm tool." >&2
@@ -18,16 +18,14 @@ show_readconfig()
 {
 	read_config
 	
-	echo "Make sure these settings are correct!" >&2
-	echo "If not, please 'sudo nano /etc/avrm.cfg' and edit them." >&2
-	echo >&2
-	echo board = "${avrm_board}" >&2
-	echo chip = "${avrm_chip}" >&2
-	echo speed = "${avrm_speed}" >&2
-	echo programmer = "${avrm_programmer}" >&2
-	echo port = "${avrm_port}" >&2
-	echo baud = "${avrm_baud}" >&2
-	echo delay = "${avrm_delay}" >&2
+	echo "Use 'avrm -c' to edit settings:" >&2
+	echo "  board = ${avrm_board}" >&2
+	echo "  chip = ${avrm_chip}" >&2
+	echo "  speed = ${avrm_speed}" >&2
+	echo "  programmer = ${avrm_programmer}" >&2
+	echo "  port = ${avrm_port}" >&2
+	echo "  baud = ${avrm_baud}" >&2
+	echo "  delay = ${avrm_delay}" >&2
 
 	echo >&2
 }
@@ -60,15 +58,19 @@ usage()
   -b            bootloader    enter bootloader mode (HWB/PE2 low)
   -m            minicom       start minicom on ${avrm_port} @ ${avrm_baud}
   -h            help          show this info
+  -s            show          show config
 " >&2
 }
 
 read_config
 
-while getopts ":hibcmrdf:" opt; do
+while getopts ":hsibcmrdf:" opt; do
   case $opt in
     h)
       cmd="help"
+      ;;
+    s)
+      cmd="show"
       ;;
     i)
       cmd="info"
@@ -131,6 +133,8 @@ elif [ "$cmd" == "minicom" ]; then
 	minicom -D ${avrm_port} -b ${avrm_baud}
 elif [ "$cmd" == "help" ]; then
 	usage
+elif [ "$cmd" == "show" ]; then
+	show_readconfig
 elif [ "$cmd" == "" ]; then
 	usage
 	show_readconfig
