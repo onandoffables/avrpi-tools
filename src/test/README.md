@@ -1,11 +1,11 @@
 blinky
 ======
 
-To build and flash this blinky example for the AVRM328 board, run:
+To build and flash this blinky example for the AVRPI328 board, run:
 
 	MCU=atmega328p make flash
 
-To build and flash for the AVRM32U4 board, run:
+To build and flash for the AVRPI32U4 board, run:
 
 	MCU=atmega32u4 make flash
 
