@@ -30,7 +30,7 @@ compile_from_source()
 
 	if [ ! -f $AVRDUDE_TGZ ]; then
 		echo "$AVRDUDE_TGZ not found. Trying another location..."
-		https://github.com/onandoffables/avrm/blob/master/install/${AVRDUDE_TGZ}?raw=true || { echo "Error getting "${AVRDUDE_TGZ}; }
+		https://github.com/onandoffables/avrpi/blob/master/install/${AVRDUDE_TGZ}?raw=true || { echo "Error getting "${AVRDUDE_TGZ}; }
 	fi
 
 	if [ -f $AVRDUDE_TGZ ]; then
@@ -106,9 +106,9 @@ m32u4_fuses_hwb()
 test_blinky()
 {
 	cd src/test/
-	if [ "$BOARD" == "AVRM168" ]; then
+	if [ "$BOARD" == "AVRPI168" ]; then
 		BRD=0 make flash
-	elif [ "$BOARD" == "AVRM328" ]; then
+	elif [ "$BOARD" == "AVRPI328" ]; then
 		if [ "$SPEED" == "12000000" ]; then
 			BRD=2 make flash
 		elif [ "$SPEED" == "16000000" ]; then
@@ -117,13 +117,13 @@ test_blinky()
 			# 8000000
 			BRD=1 make flash
 		fi
-	elif [ "$BOARD" == "AVRM32U4" ]; then
+	elif [ "$BOARD" == "AVRPI32U4" ]; then
 		BRD=4 make flash
 	elif [ "$BOARD" == "gertboard" ]; then
 		BRD=5 make flash
 	elif [ "$BOARD" == "gertduino" ]; then
 		BRD=6 make flash
-		avrm -r
+		avrpi -r
 	fi
 	make clean
 	cd ../..
@@ -173,97 +173,97 @@ install_dfu_programmer()
 	cd .. #install
 }
 
-install_avrm()
+install_avrpi()
 {
-	cd install/avrm
+	cd install/avrpi
 
-	if [ -f /etc/avrm.cfg ]; then
-		echo "Old /etc/avrm.cfg found. Backing up..." >&2
-		sudo mv /etc/avrm.cfg /etc/avrm.cfg.bak
+	if [ -f /etc/avrpi.cfg ]; then
+		echo "Old /etc/avrpi.cfg found. Backing up..." >&2
+		sudo mv /etc/avrpi.cfg /etc/avrpi.cfg.bak
 	else
-		echo "/etc/avrm.cfg not found. Installing avrm default config..." >&2
+		echo "/etc/avrpi.cfg not found. Installing avrpi default config..." >&2
 	fi
 	
-	#local avrm.cfg
-	if [ -f avrm.cfg ]; then
+	#local avrpi.cfg
+	if [ -f avrpi.cfg ]; then
 		#echo "Existing local config file found. Removing and creating new one..." >&2
-		rm avrm.cfg
+		rm avrpi.cfg
 	fi
 
-	#avrm_board
-	echo "#avrm_board can be avrm168, avrm328, avrm32u4, gertboard, gertduino" >> avrm.cfg
-	if [ "$BOARD" == "AVRM168" ]; then
-		echo "avrm_board=avrm168" >> avrm.cfg
-	elif [ "$BOARD" == "AVRM328" ]; then
-		echo "avrm_board=avrm328" >> avrm.cfg
-	elif [ "$BOARD" == "AVRM32U4" ]; then
-		echo "avrm_board=avrm32u4" >> avrm.cfg
+	#avrpi_board
+	echo "#avrpi_board can be avrpi168, avrpi328, avrpi32u4, gertboard, gertduino" >> avrpi.cfg
+	if [ "$BOARD" == "AVRPI168" ]; then
+		echo "avrpi_board=avrpi168" >> avrpi.cfg
+	elif [ "$BOARD" == "AVRPI328" ]; then
+		echo "avrpi_board=avrpi328" >> avrpi.cfg
+	elif [ "$BOARD" == "AVRPI32U4" ]; then
+		echo "avrpi_board=avrpi32u4" >> avrpi.cfg
 	elif [ "$BOARD" == "gertboard" ]; then
-		echo "avrm_board=gertboard" >> avrm.cfg
+		echo "avrpi_board=gertboard" >> avrpi.cfg
 	elif [ "$BOARD" == "gertduino" ]; then
-		echo "avrm_board=gertduino" >> avrm.cfg
+		echo "avrpi_board=gertduino" >> avrpi.cfg
 	fi
-	echo "" >> avrm.cfg
+	echo "" >> avrpi.cfg
 	
-	#avrm_chip
-	echo "#avrm_chip can be atmega168p, atmega328p, atmega32u4" >> avrm.cfg
+	#avrpi_chip
+	echo "#avrpi_chip can be atmega168p, atmega328p, atmega32u4" >> avrpi.cfg
 	if [ "$CHIP" == "ATmega168p" ]; then
-		echo "avrm_chip=avrm168" >> avrm.cfg
+		echo "avrpi_chip=avrpi168" >> avrpi.cfg
 	elif [ "$CHIP" == "ATmega328p" ]; then
-		echo "avrm_chip=atmega328p" >> avrm.cfg
+		echo "avrpi_chip=atmega328p" >> avrpi.cfg
 	elif [ "$CHIP" == "ATmega32U4" ]; then
-		echo "avrm_chip=atmega32u4" >> avrm.cfg
+		echo "avrpi_chip=atmega32u4" >> avrpi.cfg
 	else
-		echo "avrm_chip=atmega328p" >> avrm.cfg
+		echo "avrpi_chip=atmega328p" >> avrpi.cfg
 	fi
-	echo "" >> avrm.cfg
+	echo "" >> avrpi.cfg
 	
-	#avrm_speed
-	echo "#avrm_speed 8000000, 12000000, 16000000" >> avrm.cfg
-	echo "avrm_speed=$SPEED" >> avrm.cfg
-	echo "" >> avrm.cfg
+	#avrpi_speed
+	echo "#avrpi_speed 8000000, 12000000, 16000000" >> avrpi.cfg
+	echo "avrpi_speed=$SPEED" >> avrpi.cfg
+	echo "" >> avrpi.cfg
 	
-	#avrm_programmer
-	echo "#avrm_programmer linuxgpio, gpio" >> avrm.cfg
-	echo "avrm_programmer=linuxgpio" >> avrm.cfg
-	echo "" >> avrm.cfg
+	#avrpi_programmer
+	echo "#avrpi_programmer linuxgpio, gpio" >> avrpi.cfg
+	echo "avrpi_programmer=linuxgpio" >> avrpi.cfg
+	echo "" >> avrpi.cfg
 	
-	#avrm_port
-	echo "#avrm_port /dev/ttyAMA0, /dev/ttyUSB0, /dev/ttyACM0" >> avrm.cfg
+	#avrpi_port
+	echo "#avrpi_port /dev/ttyAMA0, /dev/ttyUSB0, /dev/ttyACM0" >> avrpi.cfg
 	if [ "$CHIP" == "ATmega32U4" ]; then
-		echo "avrm_port=/dev/ttyACM0" >> avrm.cfg
+		echo "avrpi_port=/dev/ttyACM0" >> avrpi.cfg
 	else
-		echo "avrm_port=/dev/ttyAMA0" >> avrm.cfg
+		echo "avrpi_port=/dev/ttyAMA0" >> avrpi.cfg
 	fi
-	echo "" >> avrm.cfg
+	echo "" >> avrpi.cfg
 	
-	#avrm_baud
-	echo "#avrm_baud 9600, 38400, 57600, 115200 " >> avrm.cfg
-	echo "avrm_baud=9600" >> avrm.cfg
-	echo "" >> avrm.cfg
+	#avrpi_baud
+	echo "#avrpi_baud 9600, 38400, 57600, 115200 " >> avrpi.cfg
+	echo "avrpi_baud=9600" >> avrpi.cfg
+	echo "" >> avrpi.cfg
 	
-	#avrm_delay
-	echo "#avrm_delay 0, 5 20 (isp clock delay)" >> avrm.cfg
-	echo "#anything other than 0 adds -i avrdude option" >> avrm.cfg
-	echo "avrm_delay=5" >> avrm.cfg
-	#echo "" >> avrm.cfg
+	#avrpi_delay
+	echo "#avrpi_delay 0, 5 20 (isp clock delay)" >> avrpi.cfg
+	echo "#anything other than 0 adds -i avrdude option" >> avrpi.cfg
+	echo "avrpi_delay=5" >> avrpi.cfg
+	#echo "" >> avrpi.cfg
 	
-	echo "Copy new avrm.cfg to /etc/avrm.cfg" >&2
-	sudo cp avrm.cfg /etc/avrm.cfg
-	echo "Copy avrm to /usr/local/bin/avrm" >&2
-	sudo cp avrm /usr/local/bin/avrm
+	echo "Copy new avrpi.cfg to /etc/avrpi.cfg" >&2
+	sudo cp avrpi.cfg /etc/avrpi.cfg
+	echo "Copy avrpi to /usr/local/bin/avrpi" >&2
+	sudo cp avrpi /usr/local/bin/avrpi
 	
-	avrm -s
+	avrpi -s
 	
-	echo "Cleaning up local avrm.cfg..." >&2
-	rm avrm.cfg
+	echo "Cleaning up local avrpi.cfg..." >&2
+	rm avrpi.cfg
 	
 	cd ../..
 }
 
 install_arduino_mk()
 {
-	# upload with 'make avrm'
+	# upload with 'make avrpi'
 	cd src/
 	./install_Arduino-Makefile.sh
 	cd ..
@@ -281,17 +281,17 @@ install_LUFA()
 {
 	# upload with 'make avrdude'
 	cd src/
-	./install_LUFA-AVRM32U4.sh
+	./install_LUFA-AVRPI32U4.sh
 	cd ..
 }
 
 do_fuses()
 {
-	if [ "$BOARD" == "AVRM168" ]; then
+	if [ "$BOARD" == "AVRPI168" ]; then
 		m168_fuses
-	elif [ "$BOARD" == "AVRM328" ]; then
+	elif [ "$BOARD" == "AVRPI328" ]; then
 		m328_fuses
-	elif [ "$BOARD" == "AVRM32U4" ]; then
+	elif [ "$BOARD" == "AVRPI32U4" ]; then
 		m32u4_fuses
 	elif [ "$BOARD" == "gertboard" ]; then
 		m328_fuses
@@ -305,7 +305,7 @@ banner()
 	#clear
 	echo ""
 	echo "#######################################################################"
-	echo "#                                AVRM                                 #"
+	echo "#                               AVRPI                                 #"
 	echo "#######################################################################"
 	echo ""
 }
@@ -324,12 +324,12 @@ usage()
 	echo "    d)    install dfu-programmer"
 	echo "    b)    install pre-compiled avrdude binary"
 	echo "    c)    compile + install avrdude from source"
-	echo "    v)    install avrm tool"
-	if [ "$BOARD" == "AVRM168" ]; then
+	echo "    v)    install avrpi tool"
+	if [ "$BOARD" == "AVRPI168" ]; then
 		echo "    f)    set ATmega168p fuses (with crystal)"
-	elif [ "$BOARD" == "AVRM328" ]; then
+	elif [ "$BOARD" == "AVRPI328" ]; then
 		echo "    f)    set ATmega328p fuses (with crystal)"
-	elif [ "$BOARD" == "AVRM32U4" ]; then
+	elif [ "$BOARD" == "AVRPI32U4" ]; then
 		echo "    f)    set ATmega32U4 fuses (with crystal)"
 		echo "    g)    set ATmega32U4 fuses (with crystal + HWB enabled)"
 	fi
@@ -338,8 +338,8 @@ usage()
 	echo "  Extra software and projects:"
 	echo "    m)    install Arduino-Makefile"
 	echo "    s)    install arduino-cmake"
-	if [ "$BOARD" == "AVRM32U4" ]; then
-		echo "    l)    install LUFA-AVRM32U4"
+	if [ "$BOARD" == "AVRPI32U4" ]; then
+		echo "    l)    install LUFA-AVRPI32U4"
 	fi
 	echo ""
 	echo "    q)    quit"
@@ -357,20 +357,20 @@ install_everything()
 	patch_arduino
 	install_wiringpi
 	#install_dfu_programmer
-	install_avrm
+	install_avrpi
 	do_fuses
 	test_blinky
 }
 
 banner
 
-#echo "    0)    AVRM168 (ATmega168p @ 8/12/16 MHz)"
-echo "  AVRM328"
+#echo "    0)    AVRPI168 (ATmega168p @ 8/12/16 MHz)"
+echo "  AVRPI328"
 echo "    1)    ATmega328p @ 8MHz"
 echo "    2)    ATmega328p @ 12MHz"
 echo "    3)    ATmega328p @ 16MHz (overclocked)"
 echo ""
-echo "  AVRM32U4"
+echo "  AVRPI32U4"
 echo "    4)    ATmega32U4 @ 8 MHz"
 echo ""
 echo "  Gertware (ATmega328p)"
@@ -382,23 +382,23 @@ echo "What board do you have:"
 read BOARDNUM
 
 if [ "$BOARDNUM" == "0" ]; then
-	BOARD="AVRM168"
+	BOARD="AVRPI168"
 	CHIP="ATmega168p"
 	SPEED="8000000"
 elif [ "$BOARDNUM" == "1" ]; then
-	BOARD="AVRM328"
+	BOARD="AVRPI328"
 	CHIP="ATmega328p"
 	SPEED="8000000"
 elif [ "$BOARDNUM" == "2" ]; then
-	BOARD="AVRM328"
+	BOARD="AVRPI328"
 	CHIP="ATmega328p"
 	SPEED="12000000"
 elif [ "$BOARDNUM" == "3" ]; then
-	BOARD="AVRM328"
+	BOARD="AVRPI328"
 	CHIP="ATmega328p"
 	SPEED="16000000"
 elif [ "$BOARDNUM" == "4" ]; then
-	BOARD="AVRM32U4"
+	BOARD="AVRPI32U4"
 	CHIP="ATmega32U4"
 	SPEED="8000000"
 elif [ "$BOARDNUM" == "5" ]; then
@@ -444,11 +444,11 @@ while [ "$OPTION" != "q" ]; do
 	elif [ "$OPTION" == "d" ]; then
 		install_dfu_programmer
 	elif [ "$OPTION" == "v" ]; then
-		install_avrm
+		install_avrpi
 	elif [ "$OPTION" == "f" ]; then
 		do_fuses
 	elif [ "$OPTION" == "g" ]; then
-		if [ "$BOARD" == "AVRM32U4" ]; then
+		if [ "$BOARD" == "AVRPI32U4" ]; then
 			m32u4_fuses_hwb
 		fi
 	elif [ "$OPTION" == "t" ]; then

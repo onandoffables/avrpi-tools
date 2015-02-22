@@ -5,11 +5,11 @@ file="$2"
 
 read_config()
 {
-	if [ -f /etc/avrm.cfg ]; then
-		#echo "Reading /etc/avrm.cfg" >&2
-		source /etc/avrm.cfg
+	if [ -f /etc/avrpi.cfg ]; then
+		#echo "Reading /etc/avrpi.cfg" >&2
+		source /etc/avrpi.cfg
 	else
-		echo "No config file found. Please install avrm tool." >&2
+		echo "No config file found. Please install avrpi tool." >&2
 		exit 1
 	fi
 }
@@ -18,14 +18,14 @@ show_readconfig()
 {
 	read_config
 	
-	echo "Use 'avrm -c' to edit settings:" >&2
-	echo "  board = ${avrm_board}" >&2
-	echo "  chip = ${avrm_chip}" >&2
-	echo "  speed = ${avrm_speed}" >&2
-	echo "  programmer = ${avrm_programmer}" >&2
-	echo "  port = ${avrm_port}" >&2
-	echo "  baud = ${avrm_baud}" >&2
-	echo "  delay = ${avrm_delay}" >&2
+	echo "Use 'avrpi -c' to edit settings:" >&2
+	echo "  board = ${avrpi_board}" >&2
+	echo "  chip = ${avrpi_chip}" >&2
+	echo "  speed = ${avrpi_speed}" >&2
+	echo "  programmer = ${avrpi_programmer}" >&2
+	echo "  port = ${avrpi_port}" >&2
+	echo "  baud = ${avrpi_baud}" >&2
+	echo "  delay = ${avrpi_delay}" >&2
 
 	echo >&2
 }
@@ -37,7 +37,7 @@ reset()
 	gpio -g write 8 0
 	sleep 1
 	gpio -g write 8 1
-	if [ "$avrm_board" == "gertduino" ]; then
+	if [ "$avrpi_board" == "gertduino" ]; then
 		#do nothing (keep as output and high)
 		gpio -g mode 8 out
 	else
@@ -48,15 +48,15 @@ reset()
 
 usage()
 {
-	echo "Usage: avrm [options] <filename>
+	echo "Usage: avrpi [options] <filename>
 
 [options] is any of the following:
-  -c            config        edit avrm config file
-  -f <file>     flash <file>  uploads <file> to AVRM board
+  -c            config        edit avrpi config file
+  -f <file>     flash <file>  uploads <file> to AVRPI board
   -i            info          show info about chip
   -r            reset         reset AVR chip
   -b            bootloader    enter bootloader mode (HWB/PE2 low)
-  -m            minicom       start minicom on ${avrm_port} @ ${avrm_baud}
+  -m            minicom       start minicom on ${avrpi_port} @ ${avrpi_baud}
   -h            help          show this info
   -s            show          show config
 " >&2
@@ -81,7 +81,7 @@ while getopts ":hsibcmrdf:" opt; do
       ;;
     c)
       cmd="config"
-      echo "configure avrm" >&2
+      echo "configure avrpi" >&2
       ;;
     m)
       cmd="minicom"
@@ -117,20 +117,20 @@ elif [ "$cmd" == "bootloader" ]; then
 	#TODO implement
 	reset
 elif [ "$cmd" == "config" ]; then
-	sudo nano /etc/avrm.cfg
+	sudo nano /etc/avrpi.cfg
 elif [ "$cmd" == "info" ]; then
-	echo "avrdude -v -c $avrm_programmer -p $avrm_chip" >&2
-	avrdude -v -c $avrm_programmer -p $avrm_chip
+	echo "avrdude -v -c $avrpi_programmer -p $avrpi_chip" >&2
+	avrdude -v -c $avrpi_programmer -p $avrpi_chip
 elif [ "$cmd" == "flash" ]; then
-	if [ "$avrm_delay" == 0 ]; then
-		echo "avrdude -v -c $avrm_programmer -p $avrm_chip -P $avrm_port -b $avrm_baud -U flash:w:$file" >&2
-		avrdude -v -c $avrm_programmer -p $avrm_chip -P $avrm_port -b $avrm_baud -U flash:w:$file
+	if [ "$avrpi_delay" == 0 ]; then
+		echo "avrdude -v -c $avrpi_programmer -p $avrpi_chip -P $avrpi_port -b $avrpi_baud -U flash:w:$file" >&2
+		avrdude -v -c $avrpi_programmer -p $avrpi_chip -P $avrpi_port -b $avrpi_baud -U flash:w:$file
 	else
-		echo "avrdude -v -c $avrm_programmer -p $avrm_chip -P $avrm_port -b $avrm_baud -i $avrm_delay -U flash:w:$file" >&2
-		avrdude -v -c $avrm_programmer -p $avrm_chip -P $avrm_port -b $avrm_baud -i $avrm_delay -U flash:w:$file
+		echo "avrdude -v -c $avrpi_programmer -p $avrpi_chip -P $avrpi_port -b $avrpi_baud -i $avrpi_delay -U flash:w:$file" >&2
+		avrdude -v -c $avrpi_programmer -p $avrpi_chip -P $avrpi_port -b $avrpi_baud -i $avrpi_delay -U flash:w:$file
 	fi
 elif [ "$cmd" == "minicom" ]; then
-	minicom -D ${avrm_port} -b ${avrm_baud}
+	minicom -D ${avrpi_port} -b ${avrpi_baud}
 elif [ "$cmd" == "help" ]; then
 	usage
 elif [ "$cmd" == "show" ]; then

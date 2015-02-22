@@ -1,12 +1,12 @@
 #!/bin/bash
 
-if [ -d LUFA-AVRM32U4 ]; then
+if [ -d LUFA-AVRPI32U4 ]; then
 	echo "Directory exists: updating"
-	cd LUFA-AVRM32U4
+	cd LUFA-AVRPI32U4
 	git pull
 	cd ..
 else
 	echo "First time git clone: installing"
-	git clone https://github.com/onandoffables/LUFA-AVRM32U4
+	git clone https://github.com/onandoffables/LUFA-AVRPI32U4
 	cd ..
 fi
