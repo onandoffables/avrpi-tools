@@ -1,14 +1,14 @@
-AVRM setup
-==========
+AVRPI setup
+===========
 
 install
 -------
 
-To install the AVRM setup tool:
+To install the AVRPI setup tool:
 
 	cd
-	git clone https://github.com/onandoffables/avrm
-	cd avrm
+	git clone https://github.com/onandoffables/avrpi
+	cd avrpi
 	./setup
 
 setup
@@ -17,15 +17,15 @@ setup
 After you run ./setup, a menu appears. First choose which board you have.
 
 	#######################################################################
-	#                                AVRM                                 #
+	#                               AVRPI                                 #
 	#######################################################################
 
-	  AVRM328
+	  AVRPI328
 		1)    ATmega328p @ 8MHz
 		2)    ATmega328p @ 12MHz
 		3)    ATmega328p @ 16MHz (overclocked)
 
-	  AVRM32U4
+	  AVRPI32U4
 		4)    ATmega32U4 @ 8 MHz
 
 	  Gertware (ATmega328p)
@@ -37,7 +37,7 @@ After you run ./setup, a menu appears. First choose which board you have.
 Choose the number of the board (for example, 4) and press enter.
 
 	#######################################################################
-	#                                AVRM                                 #
+	#                               AVRPI                                 #
 	#######################################################################
 
 	  Using a board with a ATmega32U4
@@ -53,7 +53,7 @@ Choose the number of the board (for example, 4) and press enter.
 		d)    install dfu-programmer
 		b)    install pre-compiled avrdude binary
 		c)    compile + install avrdude from source
-		v)    install avrm tool
+		v)    install avrpi tool
 		f)    set ATmega32U4 fuses (with crystal)
 		g)    set ATmega32U4 fuses (with crystal + HWB enabled)
 		t)    make + upload test/blinky.hex
@@ -61,7 +61,7 @@ Choose the number of the board (for example, 4) and press enter.
 	  Extra software and projects:
 		m)    install Arduino-Makefile
 		s)    install arduino-cmake
-		l)    install LUFA-AVRM32U4
+		l)    install LUFA-AVRPI32U4
 
 		q)    quit
 
