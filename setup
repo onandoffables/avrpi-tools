@@ -263,26 +263,49 @@ install_avrpi()
 
 install_arduino_mk()
 {
-	# upload with 'make avrpi'
 	cd src/
 	./install_Arduino-Makefile.sh
 	cd ..
+	
+	echo ""
+	echo "Usage:"
+	echo "  cd src/Arduino-Makefile/examples/Blink"
+	echo "  [edit Makefile]"
+	echo "  make avrpi"
+	
+	exit
 }
 
 install_arduino-cmake()
 {
-	# upload with 'make [projectname]-burn'
 	cd src/
 	./install_arduino-cmake.sh
 	cd ..
+	
+	echo ""
+	echo "Usage:"
+	echo "  cd src/arduino-cmake"
+	echo "  ./configure"
+	echo "  cd build/example/[projectname]"
+	echo "  [edit CMakeLists.txt]"
+	echo "  make [projectname]-burn"
+	
+	exit
 }
 
 install_LUFA()
 {
-	# upload with 'make avrdude'
 	cd src/
 	./install_LUFA-AVRPI32U4.sh
 	cd ..
+	
+	echo ""
+	echo "Usage:"
+	echo "  cd src/LUFA-AVRPI32U4/examples/Keyboard"
+	echo "  make avrdude"
+	echo "  lsusb # look for USB device ('Atmel Corp. LUFA *')"
+	
+	exit
 }
 
 do_fuses()
