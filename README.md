@@ -7,8 +7,8 @@ install
 To install the AVRPI setup tool:
 
 	cd
-	git clone https://github.com/onandoffables/avrpi
-	cd avrpi
+	git clone https://github.com/onandoffables/avrpi-setup
+	cd avrpi-setup
 	./setup
 
 setup
