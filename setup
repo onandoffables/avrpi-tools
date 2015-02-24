@@ -50,14 +50,18 @@ install_bin()
 
 patch_arduino()
 {
-	sudo mv /usr/share/arduino/hardware/arduino/programmers.txt /usr/share/arduino/hardware/arduino/programmers.txt.bak
-	sudo cp install/arduino/programmers.txt '/usr/share/arduino/hardware/arduino'
+	cd install/
 
-	sudo mv /usr/share/arduino/hardware/arduino/boards.txt /usr/share/arduino/hardware/arduino/boards.txt.bak
-	sudo cp install/arduino/boards.txt '/usr/share/arduino/hardware/arduino'
+	if [ ! -d arduino-linuxgpio ]; then
+		echo "arduino-linuxgpio not found. Getting it..."
+		git clone https://github.com/onandoffables/arduino-linuxgpio || { echo "Error getting arduino-linuxgpio"; exit 1; }
+	fi
 
-	sudo mv /usr/share/arduino/hardware/arduino/cores/arduino/USBCore.cpp /usr/share/arduino/hardware/arduino/cores/arduino/USBCore.cpp.bak
-	sudo cp install/arduino/USBCore.cpp '/usr/share/arduino/hardware/arduino/cores/arduino/USBCore.cpp'
+	cd arduino-linuxgpio
+	./patch_arduino.sh
+	cd ..
+
+	cd ..
 }
 
 m168_fuses()
