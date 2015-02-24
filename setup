@@ -21,32 +21,14 @@ compile_from_source()
 {
 	cd install/
 
-	AVRDUDE_TGZ=avrdude-6.1.tar.gz
-
-	if [ ! -f $AVRDUDE_TGZ ]; then
-		echo "$AVRDUDE_TGZ not found. Getting it..."
-		wget http://download.savannah.gnu.org/releases/avrdude/${AVRDUDE_TGZ} || { echo "Error getting "${AVRDUDE_TGZ}; }
+	if [ ! -d avrdude-linuxgpio ]; then
+		echo "avrdude-linuxgpio not found. Getting it..."
+		git clone https://github.com/onandoffables/avrdude-linuxgpio || { echo "Error getting avrdude-linuxgpio"; exit 1; }
 	fi
 
-	if [ ! -f $AVRDUDE_TGZ ]; then
-		echo "$AVRDUDE_TGZ not found. Trying another location..."
-		https://github.com/onandoffables/avrpi/blob/master/install/${AVRDUDE_TGZ}?raw=true || { echo "Error getting "${AVRDUDE_TGZ}; }
-	fi
-
-	if [ -f $AVRDUDE_TGZ ]; then
-		echo "Found $AVRDUDE_TGZ: extracting..."
-		tar -xzvf ${AVRDUDE_TGZ} || { echo "Error extracting "${AVRDUDE_TGZ}; exit 1; }
-	fi
-
-	cd avrdude-6.1
-	./bootstrap
-	./configure --enable-linuxgpio=yes --prefix=/usr --sysconfdir=/etc
-	make
-	sudo make install
+	cd avrdude-linuxgpio
+	./install_avrdude.sh
 	cd ..
-
-	sudo install -b -m 644 avrdude-bin/avrdude.conf '/etc'
-	sudo chmod 4755 /usr/bin/avrdude
 
 	cd ..
 }
