@@ -1,10 +1,23 @@
-AVRPI setup
+AVRPi setup
 ===========
+
+This setup script makes it easy to install everything you need to program AVR microcontrollers from a Raspberry Pi. It installs (or has options to install):
+
+	- Arduino IDE 1.0.1 (with patches for board and programmer)
+	- avrdude-6.1 (with linuxgpio support)
+	- avrpi (tool to interact easily with your ATmel microcontroller)
+	- Arduino-Makefile (because friends don't let friends use the Arduino IDE)
+	- wiringpi (Gordon's superduper handy tool to interact with the Raspberry Pi GPIO)
+
+ATmega32U4 specific:
+
+	- LUFA (the library to use if you're serious about creating a USB Device out of your AVR)
+	- dfu-programmer (to use a USB enabled board standalone with a custom bootloader)
 
 install
 -------
 
-To install the AVRPI setup tool:
+To install the AVRPi setup tool:
 
 	cd
 	git clone https://github.com/onandoffables/avrpi-tools
@@ -17,15 +30,15 @@ setup
 After you run ./setup, a menu appears. First choose which board you have.
 
 	#######################################################################
-	#                               AVRPI                                 #
+	#                               AVRPi                                 #
 	#######################################################################
 
-	  AVRPI328
+	  AVRPi-328
 		1)    ATmega328p @ 8MHz
 		2)    ATmega328p @ 12MHz
 		3)    ATmega328p @ 16MHz (overclocked)
 
-	  AVRPI32U4
+	  AVRPi-32U4
 		4)    ATmega32U4 @ 8 MHz
 
 	  Gertware (ATmega328p)
@@ -37,12 +50,12 @@ After you run ./setup, a menu appears. First choose which board you have.
 Choose the number of the board (for example, 4) and press enter.
 
 	#######################################################################
-	#                               AVRPI                                 #
+	#                               AVRPi                                 #
 	#######################################################################
 
 	  Using a board with a ATmega32U4
 
-	  Install everything in 1 easy step:
+	  Install everything in 1 easy step (also installs Arduino IDE):
 		e)    use pre-compiled avrdude (like a noob)
 		z)    compile + install avrdude from source (like a pro)
 
@@ -60,7 +73,6 @@ Choose the number of the board (for example, 4) and press enter.
 
 	  Extra software and projects:
 		m)    install Arduino-Makefile
-		s)    install arduino-cmake
 		l)    install LUFA-AVRPI32U4
 
 		q)    quit
@@ -70,28 +82,3 @@ Choose the number of the board (for example, 4) and press enter.
 You have the option of installing everything in 1 easy step. Choose 'e' or 'z' for this. Using the pre-compiled version of avrdude is the fastest, but you can also compile from source. This will only take a couple of minutes anyway.
 
 Use the 'custom install' options to tweak the installation process. For example, if you only want to install linuxgpio-enabled avrdude without all the Arduino cruft.
-
-avrdude-6.1-linuxgpio
----------------------
-This is plain, vanilla [avrdude-6.1](http://download.savannah.gnu.org/releases/avrdude/avrdude-6.1.tar.gz) as you can get it from [download.savannah.gnu.org](http://download.savannah.gnu.org/releases/avrdude/).
-
-This compiles and installs avrdude from source, enabling avrdude to bitbang the Raspberry Pi GPIO pins using the 'linuxgpio' (sysfsgpio) interface that's standard available in avrdude-6.1.
-
-Prerequisite to build avrdude from source (choose 'apt-get all prerequisites' to install this):
-
-	sudo apt-get install libusb-1.0-0-dev libusb-dev libftdi-dev autoconf bison flex
-
-connections
------------
-Make the following connections between the AVR and the Raspberry Pi (don't forget GND and VCC, where VCC is 3.3V).
-
-	SCK    =  11
-	MOSI   =  10
-	MISO   =  9
-	RESET  =  8
-
-avrdude usage:
-
-	avrdude -c linuxgpio -p m328p -U flash:w:blinky.hex -v
-
-If the project has a Makefile or is a cmake project, usually 'make flash' or something similar also works. Try 'make help'.

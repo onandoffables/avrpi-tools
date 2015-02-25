@@ -310,7 +310,7 @@ banner()
 	#clear
 	echo ""
 	echo "#######################################################################"
-	echo "#                               AVRPI                                 #"
+	echo "#                               AVRPi                                 #"
 	echo "#######################################################################"
 	echo ""
 }
@@ -369,13 +369,13 @@ install_everything()
 
 banner
 
-#echo "    0)    AVRPI168 (ATmega168p @ 8/12/16 MHz)"
-echo "  AVRPI328"
+#echo "    0)    AVRPi-168 (ATmega168p @ 8/12/16 MHz)"
+echo "  AVRPi-328"
 echo "    1)    ATmega328p @ 8MHz"
 echo "    2)    ATmega328p @ 12MHz"
 echo "    3)    ATmega328p @ 16MHz (overclocked)"
 echo ""
-echo "  AVRPI32U4"
+echo "  AVRPi-32U4"
 echo "    4)    ATmega32U4 @ 8 MHz"
 echo ""
 echo "  Gertware (ATmega328p)"
