@@ -346,7 +346,7 @@ usage()
 	echo ""
 	echo "  Extra software and projects:"
 	echo "    m)    install Arduino-Makefile"
-	echo "    s)    install arduino-cmake"
+#	echo "    s)    install arduino-cmake"
 	if [ "$BOARD" == "AVRPI32U4" ]; then
 		echo "    l)    install LUFA-AVRPI32U4"
 	fi
