@@ -60,29 +60,33 @@ patch_arduino()
 	cd ..
 }
 
+m48_fuses()
+{
+	avrdude -v -i16 -c linuxgpio -p m48p -U lfuse:w:0xE2:m -U hfuse:w:0xDF:m -U efuse:w:0x01:m 
+}
+
 m168_fuses()
 {
 	#from factory: (E:F9, H:DF, L:62)
-	avrdude -v -c linuxgpio -p m328p -U lfuse:w:0xE7:m -U hfuse:w:0xDF:m -U efuse:w:0x00:m
+	avrdude -v -i16 -c linuxgpio -p m328p -U lfuse:w:0xE7:m -U hfuse:w:0xDF:m -U efuse:w:0x00:m
 }
 
 m328_fuses()
 {
 	#from factory: (E:07, H:D9, L:62)
-	avrdude -v -c linuxgpio -p m328p -U lfuse:w:0xE7:m -U hfuse:w:0xD9:m -U efuse:w:0x07:m
+	avrdude -v -i16 -c linuxgpio -p m328p -U lfuse:w:0xE7:m -U hfuse:w:0xD9:m -U efuse:w:0x07:m
 }
 
 m32u4_fuses()
 {
 	#from factory:  (E:F3, H:99, L:5E)
-	avrdude -v -c linuxgpio -p m32u4 -U lfuse:w:0xde:m -U hfuse:w:0xd8:m -U efuse:w:0xcb:m
-	#avrdude -v -c linuxgpio -p m32u4 -U lfuse:w:0xde:m -U hfuse:w:0xd8:m -U efuse:w:0xfb:m
+	avrdude -v -i16 -c linuxgpio -p m32u4 -U lfuse:w:0xde:m -U hfuse:w:0xd8:m -U efuse:w:0xcb:m
 }
 
 m32u4_fuses_hwb()
 {
 	#from factory:  (E:F3, H:99, L:5E)
-	avrdude -v -c linuxgpio -p m32u4 -U lfuse:w:0xde:m -U hfuse:w:0xd8:m -U efuse:w:0xc3:m
+	avrdude -v -i16 -c linuxgpio -p m32u4 -U lfuse:w:0xde:m -U hfuse:w:0xd8:m -U efuse:w:0xc3:m
 }
 
 test_blinky()
@@ -106,7 +110,12 @@ test_blinky()
 	elif [ "$BOARD" == "gertduino" ]; then
 		BRD=6 make flash
 		avrpi -r
+	else
+		echo "No blinky for you. Sorry."
+		cd ../..
+		return
 	fi
+
 	make clean
 	cd ../..
 }
@@ -173,7 +182,7 @@ install_avrpi()
 	fi
 
 	#avrpi_board
-	echo "#avrpi_board can be avrpi168, avrpi328, avrpi32u4, gertboard, gertduino" >> avrpi.cfg
+	echo "#avrpi_board can be avrpi168, avrpi328, avrpi32u4, gertboard, gertduino, gertduino48" >> avrpi.cfg
 	if [ "$BOARD" == "AVRPI168" ]; then
 		echo "avrpi_board=avrpi168" >> avrpi.cfg
 	elif [ "$BOARD" == "AVRPI328" ]; then
@@ -184,13 +193,17 @@ install_avrpi()
 		echo "avrpi_board=gertboard" >> avrpi.cfg
 	elif [ "$BOARD" == "gertduino" ]; then
 		echo "avrpi_board=gertduino" >> avrpi.cfg
+	elif [ "$BOARD" == "gertduino48" ]; then
+		echo "avrpi_board=gertduino48" >> avrpi.cfg
 	fi
 	echo "" >> avrpi.cfg
 	
 	#avrpi_chip
-	echo "#avrpi_chip can be atmega168p, atmega328p, atmega32u4" >> avrpi.cfg
+	echo "#avrpi_chip can be atmega168p, atmega328p, atmega32u4, atmega48p" >> avrpi.cfg
 	if [ "$CHIP" == "ATmega168p" ]; then
-		echo "avrpi_chip=avrpi168" >> avrpi.cfg
+		echo "avrpi_chip=atmega168p" >> avrpi.cfg
+	elif [ "$CHIP" == "ATmega48p" ]; then
+		echo "avrpi_chip=atmega48p" >> avrpi.cfg
 	elif [ "$CHIP" == "ATmega328p" ]; then
 		echo "avrpi_chip=atmega328p" >> avrpi.cfg
 	elif [ "$CHIP" == "ATmega32U4" ]; then
@@ -302,6 +315,8 @@ do_fuses()
 		m328_fuses
 	elif [ "$BOARD" == "gertduino" ]; then
 		m328_fuses
+	elif [ "$BOARD" == "gertduino48" ]; then
+		m48_fuses
 	fi
 }
 
@@ -337,6 +352,8 @@ usage()
 		echo "    d)    install dfu-programmer"
 		echo "    f)    set ATmega32U4 fuses (with crystal)"
 		echo "    g)    set ATmega32U4 fuses (with crystal + HWB enabled)"
+	elif [ "$BOARD" == "gertduino48" ]; then
+		echo "    g)    set ATmega48p fuses"
 	fi
 	echo "    t)    make + upload test/blinky.hex"
 	echo ""
@@ -378,9 +395,10 @@ echo ""
 echo "  AVRPi-32U4"
 echo "    4)    ATmega32U4 @ 8 MHz"
 echo ""
-echo "  Gertware (ATmega328p)"
+echo "  Gertware"
 echo "    5)    Gertboard (ATmega328p @ 12 MHz)"
 echo "    6)    Gertduino (ATmega328p @ 16 MHz)"
+echo "    7)    Gertduino48 (ATmega48p @ 8 MHz)"
 echo ""
 
 echo "What board do you have:"
@@ -414,6 +432,10 @@ elif [ "$BOARDNUM" == "6" ]; then
 	BOARD="gertduino"
 	CHIP="ATmega328p"
 	SPEED="16000000"
+elif [ "$BOARDNUM" == "7" ]; then
+	BOARD="gertduino48"
+	CHIP="ATmega48p"
+	SPEED="8000000"
 else
 	echo "Error. Please enter the number of the board."
 	exit
@@ -455,6 +477,8 @@ while [ "$OPTION" != "q" ]; do
 	elif [ "$OPTION" == "g" ]; then
 		if [ "$BOARD" == "AVRPI32U4" ]; then
 			m32u4_fuses_hwb
+		elif [ "$BOARD" == "gertduino48" ]; then
+			m48_fuses
 		fi
 	elif [ "$OPTION" == "t" ]; then
 		test_blinky
