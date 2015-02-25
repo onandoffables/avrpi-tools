@@ -35,17 +35,13 @@ compile_from_source()
 
 install_bin()
 {
-	echo 'installing avrdude to usr/bin'
-	sudo mkdir -p '/usr/bin'
-	sudo install -m 4755 install/avrdude-bin/avrdude '/usr/bin'
+	cd install/
 
-	echo 'installing avrdude.conf to /etc'
-	sudo mkdir -p '/etc'
-	sudo install -b -m 644 install/avrdude-bin/avrdude.conf '/etc'
+	cd avrdude-bin
+	./install_avrdude_bin.sh
+	cd ..
 
-	echo 'installing avrdude.1.gz to /usr/share/man/man1'
-	sudo mkdir -p '/usr/share/man/man1'
-	sudo install -m 644 install/avrdude-bin/avrdude.1.gz '/usr/share/man/man1'
+	cd ..
 }
 
 patch_arduino()
