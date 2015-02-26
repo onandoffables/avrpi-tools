@@ -123,11 +123,11 @@ elif [ "$cmd" == "info" ]; then
 	avrdude -v -c $avrpi_programmer -p $avrpi_chip
 elif [ "$cmd" == "flash" ]; then
 	if [ "$avrpi_delay" == 0 ]; then
-		echo "avrdude -v -c $avrpi_programmer -p $avrpi_chip -P $avrpi_port -b $avrpi_baud -U flash:w:$file" >&2
-		avrdude -v -c $avrpi_programmer -p $avrpi_chip -P $avrpi_port -b $avrpi_baud -U flash:w:$file
+		echo "avrdude -v -c $avrpi_programmer -p $avrpi_chip -U flash:w:$file" >&2
+		avrdude -v -c $avrpi_programmer -p $avrpi_chip -U flash:w:$file
 	else
-		echo "avrdude -v -c $avrpi_programmer -p $avrpi_chip -P $avrpi_port -b $avrpi_baud -i $avrpi_delay -U flash:w:$file" >&2
-		avrdude -v -c $avrpi_programmer -p $avrpi_chip -P $avrpi_port -b $avrpi_baud -i $avrpi_delay -U flash:w:$file
+		echo "avrdude -v -c $avrpi_programmer -p $avrpi_chip -i $avrpi_delay -U flash:w:$file" >&2
+		avrdude -v -c $avrpi_programmer -p $avrpi_chip -i $avrpi_delay -U flash:w:$file
 	fi
 elif [ "$cmd" == "minicom" ]; then
 	minicom -D ${avrpi_port} -b ${avrpi_baud}
