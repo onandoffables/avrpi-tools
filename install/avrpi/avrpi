@@ -39,12 +39,11 @@ reset()
 	gpio -g write 8 1
 	if [ "$avrpi_board" == "gertduino328" ]; then
 		#do nothing (keep as output and high)
+		#device_tree needs to be disabled
 		gpio -g mode 8 out
 	else
 		gpio -g mode 8 in
 	fi
-	
-
 }
 
 
