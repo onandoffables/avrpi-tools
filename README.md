@@ -41,9 +41,11 @@ After you run ./setup, a menu appears. First choose which board you have.
 	  AVRPi-32U4
 		4)    ATmega32U4 @ 8 MHz
 
-	  Gertware (ATmega328p)
+	  Gertware
 		5)    Gertboard (ATmega328p @ 12 MHz)
 		6)    Gertduino (ATmega328p @ 16 MHz)
+		7)    Gertduino48 (ATmega48p @ 1 MHz)
+		8)    Gertduino48 (ATmega48p @ 8 MHz)
 
 	What board do you have:
 
@@ -53,9 +55,10 @@ Choose the number of the board (for example, 4) and press enter.
 	#                               AVRPi                                 #
 	#######################################################################
 
-	  Using a board with a ATmega32U4
+	  chip:  atmega32u4
+	  speed: 8000000
 
-	  Install everything in 1 easy step (also installs Arduino IDE):
+	  Install everything in 1 easy step:
 		e)    use pre-compiled avrdude (like a noob)
 		z)    compile + install avrdude from source (like a pro)
 
@@ -63,12 +66,13 @@ Choose the number of the board (for example, 4) and press enter.
 		a)    apt-get all prerequisites
 		p)    patch arduino
 		w)    install wiringPi
-		d)    install dfu-programmer
 		b)    install pre-compiled avrdude binary
 		c)    compile + install avrdude from source
 		v)    install avrpi tool
-		f)    set ATmega32U4 fuses (with crystal)
-		g)    set ATmega32U4 fuses (with crystal + HWB enabled)
+		d)    install dfu-programmer
+
+	  Fuses and test:
+		f)    set fuses for atmega32u4
 		t)    make + upload test/blinky.hex
 
 	  Extra software and projects:
@@ -77,7 +81,7 @@ Choose the number of the board (for example, 4) and press enter.
 
 		q)    quit
 
-	  Enter your choice:
+	Enter your choice:
 
 You have the option of installing everything in 1 easy step. Choose 'e' or 'z' for this. Using the pre-compiled version of avrdude is the fastest, but you can also compile from source. This will only take a couple of minutes anyway.
 
