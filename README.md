@@ -27,54 +27,32 @@ To install the AVRPi setup tool:
 setup
 -----
 
-After you run ./setup, a menu appears. First choose which board you have.
+After you run ./setup, a menu appears. Depending on the board selected, the menu changes a little. You have the option of changing the board.
 
 	#######################################################################
-	#                               AVRPi                                 #
+	#                          avrpi-tools                                #
 	#######################################################################
-
-	  AVRPi-328
-		1)    ATmega328p @ 8MHz
-		2)    ATmega328p @ 12MHz
-		3)    ATmega328p @ 16MHz (overclocked)
-
-	  AVRPi-32U4
-		4)    ATmega32U4 @ 8 MHz
-
-	  Gertware
-		5)    Gertboard (ATmega328p @ 12 MHz)
-		6)    Gertduino (ATmega328p @ 16 MHz)
-		7)    Gertduino48 (ATmega48p @ 1 MHz)
-		8)    Gertduino48 (ATmega48p @ 8 MHz)
-
-	What board do you have:
-
-Choose the number of the board (for example, 4) and press enter.
-
-	#######################################################################
-	#                               AVRPi                                 #
-	#######################################################################
-	
-	  chip:  atmega32u4
-	  speed: 8000000
 	
 	  Install everything in 1 easy step:
-	    e)    Arduino IDE + avrdude + wiringPi + avrpi
+	    e)    Arduino IDE + avrdude
+	
+	  First time - fuses and test:
+	    s)    change to different board/chip
+	    f)    set fuses for atmega32u4 on avrpi32u4
+	    t)    make + upload test/blinky.hex
 	
 	  Custom install:
 	    a)    apt-get all dependencies
 	    p)    patch arduino
 	    b)    install pre-compiled avrdude binary
 	    c)    compile + install avrdude from source
+	
+	  Optional extra:
 	    w)    install wiringPi
 	    v)    install avrpi tool
 	    d)    install dfu-programmer
 	
-	  Fuses and test:
-	    f)    set fuses for atmega32u4
-	    t)    make + upload test/blinky.hex
-	
-	  Extra software and projects:
+	  Software and projects:
 	    m)    install Arduino-Makefile
 	    l)    install LUFA-AVRPI32U4
 	
@@ -82,6 +60,6 @@ Choose the number of the board (for example, 4) and press enter.
 	
 	Enter your choice:
 
-You have the option of installing everything in 1 easy step. Choose 'e' or 'z' for this. Using the pre-compiled version of avrdude is the fastest, but you can also compile from source. This will only take a couple of minutes anyway.
+You have the option of installing everything in 1 easy step. Choose 'e' for this. That patches the Arduino IDE and libraries and installs a pre-compiled version of avrdude. But you can also compile avrdude from source. This will only take a couple of minutes anyway.
 
-Use the 'custom install' options to tweak the installation process. For example, if you only want to install linuxgpio-enabled avrdude without all the Arduino cruft.
+Use the 'custom install' options to tweak the installation process. For example, if you only want to install linuxgpio-enabled avrdude without the Arduino IDE and library.
