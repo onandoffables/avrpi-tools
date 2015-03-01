@@ -3,6 +3,11 @@
 board="0"
 chip="0"
 speed="0"
+
+if [ -f /etc/avrpi.cfg ]; then
+	source /etc/avrpi.cfg
+fi
+
 option="0"
 style="0"
 
@@ -154,44 +159,44 @@ install_avrpi()
 		rm avrpi.cfg
 	fi
 
-	#avrpi_board
-	echo "#avrpi_board can be avrpi168, avrpi328, avrpi32u4, gertboard328, gertduino328, gertduino48" >> avrpi.cfg
-	echo "avrpi_board=${board}" >> avrpi.cfg
+	#board
+	echo "#board can be avrpi168, avrpi328, avrpi32u4, gertboard328, gertduino328, gertduino48" >> avrpi.cfg
+	echo "board=${board}" >> avrpi.cfg
 	echo "" >> avrpi.cfg
 	
-	#avrpi_chip
-	echo "#avrpi_chip can be atmega168p, atmega328p, atmega32u4, atmega48p" >> avrpi.cfg
-	echo "avrpi_chip=${chip}" >> avrpi.cfg
+	#chip
+	echo "#chip can be atmega168p, atmega328p, atmega32u4, atmega48p" >> avrpi.cfg
+	echo "chip=${chip}" >> avrpi.cfg
 	echo "" >> avrpi.cfg
 	
-	#avrpi_speed
-	echo "#avrpi_speed 8000000, 12000000, 16000000" >> avrpi.cfg
-	echo "avrpi_speed=${speed}" >> avrpi.cfg
+	#speed
+	echo "#speed 8000000, 12000000, 16000000" >> avrpi.cfg
+	echo "speed=${speed}" >> avrpi.cfg
 	echo "" >> avrpi.cfg
 	
-	#avrpi_programmer
-	echo "#avrpi_programmer linuxgpio, gpio" >> avrpi.cfg
-	echo "avrpi_programmer=linuxgpio" >> avrpi.cfg
+	#programmer
+	echo "#programmer linuxgpio, gpio" >> avrpi.cfg
+	echo "programmer=linuxgpio" >> avrpi.cfg
 	echo "" >> avrpi.cfg
 	
-	#avrpi_port
-	echo "#avrpi_port /dev/ttyAMA0, /dev/ttyUSB0, /dev/ttyACM0" >> avrpi.cfg
+	#port
+	echo "#port /dev/ttyAMA0, /dev/ttyUSB0, /dev/ttyACM0" >> avrpi.cfg
 	if [ ${chip} == "atmega32u4" ]; then
-		echo "avrpi_port=/dev/ttyACM0" >> avrpi.cfg
+		echo "port=/dev/ttyACM0" >> avrpi.cfg
 	else
-		echo "avrpi_port=/dev/ttyAMA0" >> avrpi.cfg
+		echo "port=/dev/ttyAMA0" >> avrpi.cfg
 	fi
 	echo "" >> avrpi.cfg
 	
-	#avrpi_baud
-	echo "#avrpi_baud 9600, 38400, 57600, 115200 " >> avrpi.cfg
-	echo "avrpi_baud=9600" >> avrpi.cfg
+	#baud
+	echo "#baud 9600, 38400, 57600, 115200 " >> avrpi.cfg
+	echo "baud=9600" >> avrpi.cfg
 	echo "" >> avrpi.cfg
 	
-	#avrpi_delay
-	echo "#avrpi_delay 0, 5, 20 (isp clock delay)" >> avrpi.cfg
+	#delay
+	echo "#delay 0, 5, 20 (isp clock delay)" >> avrpi.cfg
 	echo "#anything other than 0 adds -i avrdude option" >> avrpi.cfg
-	echo "avrpi_delay=5" >> avrpi.cfg
+	echo "delay=5" >> avrpi.cfg
 	#echo "" >> avrpi.cfg
 	
 	echo "Copy new avrpi.cfg to /etc/avrpi.cfg" >&2
@@ -236,8 +241,8 @@ install_LUFA()
 install_everything()
 {
 	apt_get_everything
-	install_avrdude_bin
 	patch_arduino
+	install_avrdude_bin
 #	install_wiringpi
 #	install_avrpi
 }
@@ -419,10 +424,10 @@ main_menu()
 	echo ""
 	echo "  First time - fuses and test:"
 	if [ ${board} == "0" ]; then
-		echo "    s)    tell me what board you have"
+		echo "    s)    set board/chip/speed"
 		echo "    f)    set fuses for your board"
 	else
-		echo "    s)    different board"
+		echo "    s)    change to different board/chip"
 		echo "    f)    set fuses for ${chip} on ${board}"
 	fi
 	echo "    t)    make + upload test/blinky.hex"
@@ -484,6 +489,7 @@ while [ ${option} != "q" ]; do
 
 	elif [ ${option} == "s" ]; then
 		board_menu
+		install_avrpi
 	elif [ ${option} == "f" ]; then
 		if [ ${board} == "0" ]; then
 			board_menu

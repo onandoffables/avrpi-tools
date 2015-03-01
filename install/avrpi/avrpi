@@ -19,13 +19,13 @@ show_readconfig()
 	read_config
 	
 	echo "Use 'avrpi -c' to edit settings:" >&2
-	echo "  board = ${avrpi_board}" >&2
-	echo "  chip = ${avrpi_chip}" >&2
-	echo "  speed = ${avrpi_speed}" >&2
-	echo "  programmer = ${avrpi_programmer}" >&2
-	echo "  port = ${avrpi_port}" >&2
-	echo "  baud = ${avrpi_baud}" >&2
-	echo "  delay = ${avrpi_delay}" >&2
+	echo "  board = ${board}" >&2
+	echo "  chip = ${chip}" >&2
+	echo "  speed = ${speed}" >&2
+	echo "  programmer = ${programmer}" >&2
+	echo "  port = ${port}" >&2
+	echo "  baud = ${baud}" >&2
+	echo "  delay = ${delay}" >&2
 
 	echo >&2
 }
@@ -37,7 +37,7 @@ reset()
 	gpio -g write 8 0
 	sleep 1
 	gpio -g write 8 1
-	if [ "$avrpi_board" == "gertduino328" ]; then
+	if [ "$board" == "gertduino328" ]; then
 		#do nothing (keep as output and high)
 		#device_tree needs to be disabled
 		gpio -g mode 8 out
@@ -57,7 +57,7 @@ usage()
   -i            info          show info about chip
   -r            reset         reset AVR chip
   -b            bootloader    enter bootloader mode (HWB/PE2 low)
-  -m            minicom       start minicom on ${avrpi_port} @ ${avrpi_baud}
+  -m            minicom       start minicom on ${port} @ ${baud}
   -h            help          show this info
   -s            show          show config
 " >&2
@@ -120,18 +120,18 @@ elif [ "$cmd" == "bootloader" ]; then
 elif [ "$cmd" == "config" ]; then
 	sudo nano /etc/avrpi.cfg
 elif [ "$cmd" == "info" ]; then
-	echo "avrdude -v -c $avrpi_programmer -p $avrpi_chip" >&2
-	avrdude -v -c $avrpi_programmer -p $avrpi_chip
+	echo "avrdude -v -c $programmer -p $chip" >&2
+	avrdude -v -c $programmer -p $chip
 elif [ "$cmd" == "flash" ]; then
-	if [ "$avrpi_delay" == 0 ]; then
-		echo "avrdude -v -c $avrpi_programmer -p $avrpi_chip -U flash:w:$file" >&2
-		avrdude -v -c $avrpi_programmer -p $avrpi_chip -U flash:w:$file
+	if [ "$delay" == 0 ]; then
+		echo "avrdude -v -c $programmer -p $chip -U flash:w:$file" >&2
+		avrdude -v -c $programmer -p $chip -U flash:w:$file
 	else
-		echo "avrdude -v -c $avrpi_programmer -p $avrpi_chip -i $avrpi_delay -U flash:w:$file" >&2
-		avrdude -v -c $avrpi_programmer -p $avrpi_chip -i $avrpi_delay -U flash:w:$file
+		echo "avrdude -v -c $programmer -p $chip -i $delay -U flash:w:$file" >&2
+		avrdude -v -c $programmer -p $chip -i $delay -U flash:w:$file
 	fi
 elif [ "$cmd" == "minicom" ]; then
-	minicom -D ${avrpi_port} -b ${avrpi_baud}
+	minicom -D ${port} -b ${baud}
 elif [ "$cmd" == "help" ]; then
 	usage
 elif [ "$cmd" == "show" ]; then
