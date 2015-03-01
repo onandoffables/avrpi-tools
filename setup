@@ -268,8 +268,10 @@ fuse_menu()
 	if [ ${board} == "avrpi168" ]; then
 		echo "    f)    set ATmega168p fuses (with crystal)"
 	elif [ ${board} == "avrpi328" ]; then
-		echo "    f)    set ATmega328p fuses (with crystal)"
-		echo "    g)    set ATmega328p fuses (with crystal + preserve EEPROM on erase)"
+		echo "    a)    set ATmega328p fuses (1 MHz, no crystal)"
+		echo "    b)    set ATmega328p fuses (8 MHz, no crystal)"
+		echo "    f)    set ATmega328p fuses (8-16 MHz with crystal)"
+		echo "    g)    set ATmega328p fuses (8-16 MHz with crystal + preserve EEPROM)"
 	elif [ ${board} == "avrpi32u4" ]; then
 		echo "    f)    set ATmega32U4 fuses (with crystal. recommended)"
 		echo "    g)    set ATmega32U4 fuses (with crystal + HWB enabled)"
@@ -296,7 +298,11 @@ fuse_menu()
 		fi
 	elif [ ${board} == "avrpi328" ]; then
 		#from factory: (E:07, H:D9, L:62)
-		if [ ${fuse} == "f" ]; then
+		if [ ${fuse} == "a" ]; then
+			set_fuse ${chip} 0x07 0xD9 0x62
+		elif [ ${fuse} == "b" ]; then
+			set_fuse ${chip} 0x07 0xD9 0xE2
+		elif [ ${fuse} == "f" ]; then
 			set_fuse ${chip} 0x07 0xD9 0xE7
 		elif [ ${fuse} == "g" ]; then
 			set_fuse ${chip} 0x07 0xD1 0xE7
@@ -465,6 +471,10 @@ while [ ${option} != "q" ]; do
 
 	echo "Enter your choice:"
 	read option
+	
+	if [ -z ${option} ]; then
+		exit
+	fi
 	
 	if [ ${option} == "e" ]; then
 		install_everything
