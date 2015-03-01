@@ -1,13 +1,13 @@
 #!/bin/bash
 
-echo 'installing avrdude to usr/bin'
-sudo mkdir -p '/usr/bin'
-sudo install -m 4755 bin/avrdude '/usr/bin'
+# dependencies
+sudo apt-get install -y libftdi1 libelf1
 
-echo 'installing avrdude.conf to /etc'
-sudo mkdir -p '/etc'
-sudo install -b -m 644 bin/avrdude.conf '/etc'
+# install deb
+sudo dpkg -i avrdude_6.1-2_armhf.deb
 
-echo 'installing avrdude.1.gz to /usr/share/man/man1'
-sudo mkdir -p '/usr/share/man/man1'
-sudo install -m 644 bin/avrdude.1.gz '/usr/share/man/man1'
+# fix error by installing libftdi1 libelf1
+#sudo apt-get install -f
+
+# so we don't need sudo
+sudo chmod 4755 /usr/bin/avrdude
