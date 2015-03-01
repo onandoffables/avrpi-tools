@@ -11,10 +11,12 @@ apt_get_everything()
 {
 #	sudo apt-get update
 #	sudo apt-get upgrade
-	sudo apt-get install -y arduino avr-libc binutils-avr gcc-avr avra libelf1
-#	sudo apt-get install -y gdb-avr simulavr
-#	sudo apt-get install -y cmake minicom bc evtest
-#	sudo apt-get install -y libusb-1.0-0-dev libusb-dev libftdi-dev libftdi1 libelf-dev autoconf bison flex
+	sudo apt-get install -y arduino # Arduino IDE
+	sudo apt-get install -y libftdi1 libelf1 # deps for avrdude.deb
+	sudo apt-get install -y avr-libc binutils-avr gcc-avr avra # avr-gcc and friends
+#	sudo apt-get install -y gdb-avr simulavr # debugging
+#	sudo apt-get install -y cmake minicom bc evtest # misc tools
+#	sudo apt-get install -y libusb-1.0-0-dev libusb-dev libftdi-dev libftdi1 libelf-dev autoconf bison flex # compile avrdude
 }
 
 compile_from_source()
