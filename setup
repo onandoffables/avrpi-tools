@@ -11,10 +11,10 @@ apt_get_everything()
 {
 #	sudo apt-get update
 #	sudo apt-get upgrade
-	sudo apt-get install -y arduino avr-libc binutils-avr gcc-avr avra
+	sudo apt-get install -y arduino avr-libc binutils-avr gcc-avr avra libelf1
 #	sudo apt-get install -y gdb-avr simulavr
-	sudo apt-get install -y cmake minicom bc evtest
-	sudo apt-get install -y libusb-1.0-0-dev libusb-dev libftdi-dev libftdi1 libelf-dev autoconf bison flex
+#	sudo apt-get install -y cmake minicom bc evtest
+#	sudo apt-get install -y libusb-1.0-0-dev libusb-dev libftdi-dev libftdi1 libelf-dev autoconf bison flex
 }
 
 compile_from_source()
