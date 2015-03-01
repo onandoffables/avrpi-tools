@@ -54,33 +54,30 @@ Choose the number of the board (for example, 4) and press enter.
 	#######################################################################
 	#                               AVRPi                                 #
 	#######################################################################
-
-	  chip:  atmega32u4
+	
+	  chip:  atmega328p
 	  speed: 8000000
-
+	
 	  Install everything in 1 easy step:
-		e)    use pre-compiled avrdude (like a noob)
-		z)    compile + install avrdude from source (like a pro)
-
+	    e)    Arduino IDE + avrdude + wiringpi + avrpi
+	
 	  Custom install:
-		a)    apt-get all prerequisites
-		p)    patch arduino
-		w)    install wiringPi
-		b)    install pre-compiled avrdude binary
-		c)    compile + install avrdude from source
-		v)    install avrpi tool
-		d)    install dfu-programmer
-
+	    a)    apt-get all dependencies
+	    p)    patch arduino
+	    b)    install pre-compiled avrdude binary
+	    c)    compile + install avrdude from source
+	    w)    install wiringPi
+	    v)    install avrpi tool
+	
 	  Fuses and test:
-		f)    set fuses for atmega32u4
-		t)    make + upload test/blinky.hex
-
+	    f)    set fuses for atmega328p
+	    t)    make + upload test/blinky.hex
+	
 	  Extra software and projects:
-		m)    install Arduino-Makefile
-		l)    install LUFA-AVRPI32U4
-
-		q)    quit
-
+	    m)    install Arduino-Makefile
+	
+	    q)    quit
+	
 	Enter your choice:
 
 You have the option of installing everything in 1 easy step. Choose 'e' or 'z' for this. Using the pre-compiled version of avrdude is the fastest, but you can also compile from source. This will only take a couple of minutes anyway.

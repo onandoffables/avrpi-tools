@@ -16,7 +16,7 @@ apt_get_everything()
 	sudo apt-get install -y avr-libc binutils-avr gcc-avr avra # avr-gcc and friends
 #	sudo apt-get install -y gdb-avr simulavr # debugging
 #	sudo apt-get install -y cmake minicom bc evtest # misc tools
-#	sudo apt-get install -y libusb-1.0-0-dev libusb-dev libftdi-dev libftdi1 libelf-dev autoconf bison flex # compile avrdude
+	sudo apt-get install -y libusb-1.0-0-dev libusb-dev libftdi-dev libftdi1 libelf-dev autoconf bison flex # compile avrdude
 }
 
 compile_from_source()
@@ -236,11 +236,7 @@ install_LUFA()
 install_everything()
 {
 	apt_get_everything
-	if [ "$STYLE" == "noob" ]; then
-		install_bin
-	elif [ "$STYLE" == "pro" ]; then
-		compile_from_source
-	fi
+	install_bin
 	patch_arduino
 	install_wiringpi
 	install_avrpi
@@ -419,15 +415,14 @@ board_menu()
 main_menu()
 {
 	echo "  Install everything in 1 easy step:"
-	echo "    e)    use pre-compiled avrdude (like a noob)"
-	echo "    z)    compile + install avrdude from source (like a pro)"
+	echo "    e)    Arduino IDE + avrdude + wiringpi + avrpi"
 	echo ""
 	echo "  Custom install:"
-	echo "    a)    apt-get all prerequisites"
+	echo "    a)    apt-get all dependencies"
 	echo "    p)    patch arduino"
-	echo "    w)    install wiringPi"
 	echo "    b)    install pre-compiled avrdude binary"
 	echo "    c)    compile + install avrdude from source"
+	echo "    w)    install wiringPi"
 	echo "    v)    install avrpi tool"
 	if [ "$BOARD" == "avrpi32u4" ]; then
 		echo "    d)    install dfu-programmer"
@@ -461,10 +456,6 @@ while [ "$OPTION" != "q" ]; do
 	read OPTION
 	
 	if [ "$OPTION" == "e" ]; then
-		STYLE="noob"
-		install_everything
-	elif [ "$OPTION" == "z" ]; then
-		STYLE="pro"
 		install_everything
 
 	elif [ "$OPTION" == "a" ]; then
