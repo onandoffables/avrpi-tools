@@ -55,11 +55,11 @@ Choose the number of the board (for example, 4) and press enter.
 	#                               AVRPi                                 #
 	#######################################################################
 	
-	  chip:  atmega328p
+	  chip:  atmega32u4
 	  speed: 8000000
 	
 	  Install everything in 1 easy step:
-	    e)    Arduino IDE + avrdude + wiringpi + avrpi
+	    e)    Arduino IDE + avrdude + wiringPi + avrpi
 	
 	  Custom install:
 	    a)    apt-get all dependencies
@@ -68,13 +68,15 @@ Choose the number of the board (for example, 4) and press enter.
 	    c)    compile + install avrdude from source
 	    w)    install wiringPi
 	    v)    install avrpi tool
+	    d)    install dfu-programmer
 	
 	  Fuses and test:
-	    f)    set fuses for atmega328p
+	    f)    set fuses for atmega32u4
 	    t)    make + upload test/blinky.hex
 	
 	  Extra software and projects:
 	    m)    install Arduino-Makefile
+	    l)    install LUFA-AVRPI32U4
 	
 	    q)    quit
 	

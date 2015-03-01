@@ -415,7 +415,7 @@ board_menu()
 main_menu()
 {
 	echo "  Install everything in 1 easy step:"
-	echo "    e)    Arduino IDE + avrdude + wiringpi + avrpi"
+	echo "    e)    Arduino IDE + avrdude + wiringPi + avrpi"
 	echo ""
 	echo "  Custom install:"
 	echo "    a)    apt-get all dependencies"
