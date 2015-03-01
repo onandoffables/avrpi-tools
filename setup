@@ -1,10 +1,10 @@
 #!/bin/bash
 
-BOARD="0"
-CHIP="0"
-SPEED="0"
-OPTION="0"
-STYLE="0"
+board="0"
+chip="0"
+speed="0"
+option="0"
+style="0"
 
 
 apt_get_everything()
@@ -19,7 +19,7 @@ apt_get_everything()
 	sudo apt-get install -y libusb-1.0-0-dev libftdi-dev autoconf bison flex # compile avrdude
 }
 
-compile_from_source()
+install_avrdude_source()
 {
 	cd install/
 
@@ -35,7 +35,7 @@ compile_from_source()
 	cd ..
 }
 
-install_bin()
+install_avrdude_bin()
 {
 	cd install/
 
@@ -65,22 +65,22 @@ patch_arduino()
 test_blinky()
 {
 	cd src/test/
-	if [ "$BOARD" == "avrpi168" ]; then
+	if [ ${board} == "avrpi168" ]; then
 		BRD=0 make flash
-	elif [ "$BOARD" == "avrpi328" ]; then
-		if [ "$SPEED" == "12000000" ]; then
+	elif [ ${board} == "avrpi328" ]; then
+		if [ ${speed} == "12000000" ]; then
 			BRD=2 make flash
-		elif [ "$SPEED" == "16000000" ]; then
+		elif [ ${speed} == "16000000" ]; then
 			BRD=3 make flash
 		else
 			# 8000000
 			BRD=1 make flash
 		fi
-	elif [ "$BOARD" == "avrpi32u4" ]; then
+	elif [ ${board} == "avrpi32u4" ]; then
 		BRD=4 make flash
-	elif [ "$BOARD" == "gertboard328" ]; then
+	elif [ ${board} == "gertboard328" ]; then
 		BRD=5 make flash
-	elif [ "$BOARD" == "gertduino328" ]; then
+	elif [ ${board} == "gertduino328" ]; then
 		BRD=6 make flash
 		avrpi -r
 	else
@@ -156,17 +156,17 @@ install_avrpi()
 
 	#avrpi_board
 	echo "#avrpi_board can be avrpi168, avrpi328, avrpi32u4, gertboard328, gertduino328, gertduino48" >> avrpi.cfg
-	echo "avrpi_board=$BOARD" >> avrpi.cfg
+	echo "avrpi_board=${board}" >> avrpi.cfg
 	echo "" >> avrpi.cfg
 	
 	#avrpi_chip
 	echo "#avrpi_chip can be atmega168p, atmega328p, atmega32u4, atmega48p" >> avrpi.cfg
-	echo "avrpi_chip=$CHIP" >> avrpi.cfg
+	echo "avrpi_chip=${chip}" >> avrpi.cfg
 	echo "" >> avrpi.cfg
 	
 	#avrpi_speed
 	echo "#avrpi_speed 8000000, 12000000, 16000000" >> avrpi.cfg
-	echo "avrpi_speed=$SPEED" >> avrpi.cfg
+	echo "avrpi_speed=${speed}" >> avrpi.cfg
 	echo "" >> avrpi.cfg
 	
 	#avrpi_programmer
@@ -176,7 +176,7 @@ install_avrpi()
 	
 	#avrpi_port
 	echo "#avrpi_port /dev/ttyAMA0, /dev/ttyUSB0, /dev/ttyACM0" >> avrpi.cfg
-	if [ "$CHIP" == "atmega32u4" ]; then
+	if [ ${chip} == "atmega32u4" ]; then
 		echo "avrpi_port=/dev/ttyACM0" >> avrpi.cfg
 	else
 		echo "avrpi_port=/dev/ttyAMA0" >> avrpi.cfg
@@ -189,7 +189,7 @@ install_avrpi()
 	echo "" >> avrpi.cfg
 	
 	#avrpi_delay
-	echo "#avrpi_delay 0, 5 20 (isp clock delay)" >> avrpi.cfg
+	echo "#avrpi_delay 0, 5, 20 (isp clock delay)" >> avrpi.cfg
 	echo "#anything other than 0 adds -i avrdude option" >> avrpi.cfg
 	echo "avrpi_delay=5" >> avrpi.cfg
 	#echo "" >> avrpi.cfg
@@ -236,16 +236,16 @@ install_LUFA()
 install_everything()
 {
 	apt_get_everything
-	install_bin
+	install_avrdude_bin
 	patch_arduino
-	install_wiringpi
-	install_avrpi
+#	install_wiringpi
+#	install_avrpi
 }
 
 set_fuse()
 {
 	#from factory: (E:xx, H:xx, L:xx)
-	avrdude -i16 -c linuxgpio -p ${CHIP} -U efuse:w:$1:m -U hfuse:w:$2:m -U lfuse:w:$3:m
+	avrdude -i16 -c linuxgpio -p $1 -U efuse:w:$2:m -U hfuse:w:$3:m -U lfuse:w:$4:m
 }
 
 no_option()
@@ -260,19 +260,19 @@ fuse_menu()
 
 	echo "  Fuse settings:"
 
-	if [ "$BOARD" == "avrpi168" ]; then
+	if [ ${board} == "avrpi168" ]; then
 		echo "    f)    set ATmega168p fuses (with crystal)"
-	elif [ "$BOARD" == "avrpi328" ]; then
+	elif [ ${board} == "avrpi328" ]; then
 		echo "    f)    set ATmega328p fuses (with crystal)"
 		echo "    g)    set ATmega328p fuses (with crystal + preserve EEPROM on erase)"
-	elif [ "$BOARD" == "avrpi32u4" ]; then
+	elif [ ${board} == "avrpi32u4" ]; then
 		echo "    f)    set ATmega32U4 fuses (with crystal. recommended)"
 		echo "    g)    set ATmega32U4 fuses (with crystal + HWB enabled)"
-	elif [ "$BOARD" == "gertboard328" ]; then
+	elif [ ${board} == "gertboard328" ]; then
 		echo "    f)    set ATmega328p fuses (with crystal)"
-	elif [ "$BOARD" == "gertduino328" ]; then
+	elif [ ${board} == "gertduino328" ]; then
 		echo "    f)    set ATmega328p fuses (with crystal)"
-	elif [ "$BOARD" == "gertduino48" ]; then
+	elif [ ${board} == "gertduino48" ]; then
 		echo "    f)    set ATmega48p fuses (1 MHz)"
 		echo "    g)    set ATmega48p fuses (8 MHz)"
 	fi
@@ -282,58 +282,58 @@ fuse_menu()
 	read fuse
 
 	#set_fuse efuse hfuse lfuse
-	if [ "$BOARD" == "avrpi168" ]; then
+	if [ ${board} == "avrpi168" ]; then
 		#from factory: (E:01, H:DF, L:62)
-		if [ "$fuse" == "f" ]; then
-			set_fuse 0x00 0xDF 0xE7
+		if [ ${fuse} == "f" ]; then
+			set_fuse ${chip} 0x00 0xDF 0xE7
 		else
 			no_option $fuse
 		fi
-	elif [ "$BOARD" == "avrpi328" ]; then
+	elif [ ${board} == "avrpi328" ]; then
 		#from factory: (E:07, H:D9, L:62)
-		if [ "$fuse" == "f" ]; then
-			set_fuse 0x07 0xD9 0xE7
-		elif [ "$fuse" == "g" ]; then
-			set_fuse 0x07 0xD1 0xE7
+		if [ ${fuse} == "f" ]; then
+			set_fuse ${chip} 0x07 0xD9 0xE7
+		elif [ ${fuse} == "g" ]; then
+			set_fuse ${chip} 0x07 0xD1 0xE7
 		else
 			no_option $fuse
 		fi
-	elif [ "$BOARD" == "avrpi32u4" ]; then
+	elif [ ${board} == "avrpi32u4" ]; then
 		#from factory: (E:03, H:99, L:5E)
-		if [ "$fuse" == "f" ]; then
-			set_fuse 0xcb 0xd8 0xde
-		elif [ "$fuse" == "g" ]; then
-			set_fuse 0xc3 0xd8 0xde
+		if [ ${fuse} == "f" ]; then
+			set_fuse ${chip} 0xcb 0xd8 0xde
+		elif [ ${fuse} == "g" ]; then
+			set_fuse ${chip} 0xc3 0xd8 0xde
 		else
 			no_option $fuse
 		fi
-	elif [ "$BOARD" == "gertboard168" ]; then
+	elif [ ${board} == "gertboard168" ]; then
 		#from factory: (E:F9, H:DF, L:62)
-		if [ "$fuse" == "f" ]; then
-			set_fuse 0x00 0xDF 0xE7
+		if [ ${fuse} == "f" ]; then
+			set_fuse ${chip} 0x00 0xDF 0xE7
 		else
 			no_option $fuse
 		fi
-	elif [ "$BOARD" == "gertboard328" ]; then
+	elif [ ${board} == "gertboard328" ]; then
 		#from factory: (E:07, H:D9, L:62)
-		if [ "$fuse" == "f" ]; then
-			set_fuse 0x07 0xD9 0xE7
+		if [ ${fuse} == "f" ]; then
+			set_fuse ${chip} 0x07 0xD9 0xE7
 		else
 			no_option $fuse
 		fi
-	elif [ "$BOARD" == "gertduino328" ]; then
+	elif [ ${board} == "gertduino328" ]; then
 		#from factory: (E:07, H:D9, L:62)
-		if [ "$fuse" == "f" ]; then
-			set_fuse 0x07 0xD9 0xE7
+		if [ ${fuse} == "f" ]; then
+			set_fuse ${chip} 0x07 0xD9 0xE7
 		else
 			no_option $fuse
 		fi
-	elif [ "$BOARD" == "gertduino48" ]; then
+	elif [ ${board} == "gertduino48" ]; then
 		#from factory: (E:FF, H:DF, L:62)
-		if [ "$fuse" == "f" ]; then
-			set_fuse 0xFF 0xDF 0x62
-		elif [ "$fuse" == "g" ]; then
-			set_fuse 0xFF 0xDF 0xE2
+		if [ ${fuse} == "f" ]; then
+			set_fuse ${chip} 0xFF 0xDF 0x62
+		elif [ ${fuse} == "g" ]; then
+			set_fuse ${chip} 0xFF 0xDF 0xE2
 		else
 			no_option $fuse
 		fi
@@ -345,7 +345,7 @@ banner()
 	#clear
 	echo ""
 	echo "#######################################################################"
-	echo "#                               AVRPi                                 #"
+	echo "#                          avrpi-tools                                #"
 	echo "#######################################################################"
 	echo ""
 }
@@ -371,70 +371,78 @@ board_menu()
 	echo ""
 
 	echo "What board do you have:"
-	read BOARDNUM
+	read boardnum
 
-	#if [ "$BOARDNUM" == "0" ]; then
-	#	BOARD="avrpi168"
-	#	CHIP="atmega168p"
-	#	SPEED="8000000"
+	#if [ ${boardnum} == "0" ]; then
+	#	board="avrpi168"
+	#	chip="atmega168p"
+	#	speed="8000000"
 	#fi
-	if [ "$BOARDNUM" == "1" ]; then
-		BOARD="avrpi328"
-		CHIP="atmega328p"
-		SPEED="8000000"
-	elif [ "$BOARDNUM" == "2" ]; then
-		BOARD="avrpi328"
-		CHIP="atmega328p"
-		SPEED="12000000"
-	elif [ "$BOARDNUM" == "3" ]; then
-		BOARD="avrpi328"
-		CHIP="atmega328p"
-		SPEED="16000000"
-	elif [ "$BOARDNUM" == "4" ]; then
-		BOARD="avrpi32u4"
-		CHIP="atmega32u4"
-		SPEED="8000000"
-	elif [ "$BOARDNUM" == "5" ]; then
-		BOARD="gertboard328"
-		CHIP="atmega328p"
-		SPEED="12000000"
-	elif [ "$BOARDNUM" == "6" ]; then
-		BOARD="gertduino328"
-		CHIP="atmega328p"
-		SPEED="16000000"
-	elif [ "$BOARDNUM" == "7" ]; then
-		BOARD="gertduino48"
-		CHIP="atmega48p"
-		SPEED="8000000"
+	if [ ${boardnum} == "1" ]; then
+		board="avrpi328"
+		chip="atmega328p"
+		speed="8000000"
+	elif [ ${boardnum} == "2" ]; then
+		board="avrpi328"
+		chip="atmega328p"
+		speed="12000000"
+	elif [ ${boardnum} == "3" ]; then
+		board="avrpi328"
+		chip="atmega328p"
+		speed="16000000"
+	elif [ ${boardnum} == "4" ]; then
+		board="avrpi32u4"
+		chip="atmega32u4"
+		speed="8000000"
+	elif [ ${boardnum} == "5" ]; then
+		board="gertboard328"
+		chip="atmega328p"
+		speed="12000000"
+	elif [ ${boardnum} == "6" ]; then
+		board="gertduino328"
+		chip="atmega328p"
+		speed="16000000"
+	elif [ ${boardnum} == "7" ]; then
+		board="gertduino48"
+		chip="atmega48p"
+		speed="8000000"
 	else
 		echo "Error. Please enter the number of the board."
-		no_option $BOARDNUM
+		no_option ${boardnum}
 	fi
 }
 
 main_menu()
 {
 	echo "  Install everything in 1 easy step:"
-	echo "    e)    Arduino IDE + avrdude + wiringPi + avrpi"
+	echo "    e)    Arduino IDE + avrdude"
+	echo ""
+	echo "  First time - fuses and test:"
+	if [ ${board} == "0" ]; then
+		echo "    s)    tell me what board you have"
+		echo "    f)    set fuses for your board"
+	else
+		echo "    s)    different board"
+		echo "    f)    set fuses for ${chip} on ${board}"
+	fi
+	echo "    t)    make + upload test/blinky.hex"
 	echo ""
 	echo "  Custom install:"
 	echo "    a)    apt-get all dependencies"
 	echo "    p)    patch arduino"
 	echo "    b)    install pre-compiled avrdude binary"
 	echo "    c)    compile + install avrdude from source"
+	echo ""
+	echo "  Optional extra:"
 	echo "    w)    install wiringPi"
 	echo "    v)    install avrpi tool"
-	if [ "$BOARD" == "avrpi32u4" ]; then
+	if [ ${board} == "avrpi32u4" ]; then
 		echo "    d)    install dfu-programmer"
 	fi
 	echo ""
-	echo "  Fuses and test:"
-	echo "    f)    set fuses for $CHIP"
-	echo "    t)    make + upload test/blinky.hex"
-	echo ""
-	echo "  Extra software and projects:"
+	echo "  Software and projects:"
 	echo "    m)    install Arduino-Makefile"
-	if [ "$BOARD" == "avrpi32u4" ]; then
+	if [ ${board} == "avrpi32u4" ]; then
 		echo "    l)    install LUFA-AVRPI32U4"
 	fi
 	echo ""
@@ -442,54 +450,63 @@ main_menu()
 	echo ""
 }
 
-board_menu
-
-while [ "$OPTION" != "q" ]; do
+while [ ${option} != "q" ]; do
 
 	banner
-	echo "  chip:  $CHIP"
-	echo "  speed: $SPEED"
-	echo ""
+	#echo "  chip:  ${chip}"
+	#echo "  speed: ${speed}"
+	#echo ""
 	main_menu
 
 	echo "Enter your choice:"
-	read OPTION
+	read option
 	
-	if [ "$OPTION" == "e" ]; then
+	if [ ${option} == "e" ]; then
 		install_everything
 
-	elif [ "$OPTION" == "a" ]; then
+	elif [ ${option} == "a" ]; then
 		apt_get_everything
-	elif [ "$OPTION" == "c" ]; then
-		compile_from_source
-	elif [ "$OPTION" == "b" ]; then
-		install_bin
-	elif [ "$OPTION" == "p" ]; then
+	elif [ ${option} == "c" ]; then
+		install_avrdude_source
+	elif [ ${option} == "b" ]; then
+		install_avrdude_bin
+	elif [ ${option} == "p" ]; then
 		patch_arduino
-	elif [ "$OPTION" == "w" ]; then
+	elif [ ${option} == "w" ]; then
 		install_wiringpi
-	elif [ "$OPTION" == "d" ]; then
+	elif [ ${option} == "d" ]; then
 		install_dfu_programmer
-	elif [ "$OPTION" == "v" ]; then
+	elif [ ${option} == "v" ]; then
+		if [ ${board} == "0" ]; then
+			board_menu
+		fi
 		install_avrpi
 
-	elif [ "$OPTION" == "f" ]; then
+	elif [ ${option} == "s" ]; then
+		board_menu
+	elif [ ${option} == "f" ]; then
+		if [ ${board} == "0" ]; then
+			board_menu
+		fi
 		fuse_menu
-	elif [ "$OPTION" == "t" ]; then
+	elif [ ${option} == "t" ]; then
+		if [ ${board} == "0" ]; then
+			board_menu
+		fi
 		test_blinky
 
-	elif [ "$OPTION" == "m" ]; then
+	elif [ ${option} == "m" ]; then
 		install_arduino_mk
 		exit
-	elif [ "$OPTION" == "l" ]; then
+	elif [ ${option} == "l" ]; then
 		install_LUFA
 		exit
 
-	elif [ "$OPTION" == "q" ]; then
+	elif [ ${option} == "q" ]; then
 		exit
 	else
-		#no_option $OPTION
-		echo "'$OPTION' is an unkown option."
+		#no_option ${option}
+		echo "'${option}' is an unkown option."
 	fi
 
 done
