@@ -33,17 +33,34 @@ show_readconfig()
 
 reset()
 {
+	# RST 8
 	gpio -g mode 8 out
 	gpio -g write 8 0
 	sleep 1
 	gpio -g write 8 1
-	if [ "$board" == "gertduino328" ]; then
+	if [ ${board} == "gertduino328" ]; then
 		#do nothing (keep as output and high)
 		#device_tree needs to be disabled
 		gpio -g mode 8 out
 	else
 		gpio -g mode 8 in
 	fi
+}
+
+bootloader()
+{
+	# RST 8
+	# PE2 23
+	gpio -g mode 23 out
+	gpio -g mode 8 out
+	gpio -g write 23 0
+	gpio -g write 8 0
+	sleep 1
+	gpio -g write 8 1
+	sleep 1
+	gpio -g write 23 1
+	gpio -g mode 8 in
+	gpio -g mode 23 in
 }
 
 
@@ -115,8 +132,7 @@ done
 if [ "$cmd" == "reset" ]; then
 	reset
 elif [ "$cmd" == "bootloader" ]; then
-	#TODO implement
-	reset
+	bootloader
 elif [ "$cmd" == "config" ]; then
 	sudo nano /etc/avrpi.cfg
 elif [ "$cmd" == "info" ]; then
