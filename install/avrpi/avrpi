@@ -70,11 +70,11 @@ usage()
 
 [options] is any of the following:
   -c            config        edit avrpi config file
-  -f <file>     flash <file>  uploads <file> to AVRPI board
-  -u <file>     upload <file> uploads <file> using bootloader
+  -f <file>     flash <file>  flash <file> to avrpi board
+  -u <file>     upload <file> upload <file> using bootloader
   -i            info          show info about chip
   -r            reset         reset AVR chip
-  -b            bootloader    enter bootloader mode (HWB/PE2 low)
+  -b            bootloader    enter bootloader mode (HWB fuses set)
   -m            minicom       start minicom on ${port} @ ${baud}
   -h            help          show this info
   -s            show          show config
@@ -82,6 +82,7 @@ usage()
 }
 
 read_config
+cmd=0
 
 while getopts ":hsibcmrdu:f:" opt; do
   case $opt in
@@ -134,33 +135,33 @@ done
 
 
 
-if [ "$cmd" == "reset" ]; then
+if [ ${cmd} == "reset" ]; then
 	reset
-elif [ "$cmd" == "bootloader" ]; then
+elif [ ${cmd} == "bootloader" ]; then
 	bootloader
-elif [ "$cmd" == "config" ]; then
+elif [ ${cmd} == "config" ]; then
 	sudo nano /etc/avrpi.cfg
-elif [ "$cmd" == "info" ]; then
-	echo "avrdude -v -c $programmer -p $chip" >&2
-	avrdude -v -c $programmer -p $chip
-elif [ "$cmd" == "flash" ]; then
-	if [ "$delay" == 0 ]; then
-		echo "avrdude -v -c $programmer -p $chip -U flash:w:$file" >&2
-		avrdude -v -c $programmer -p $chip -U flash:w:$file
+elif [ ${cmd} == "info" ]; then
+	echo "avrdude -v -c ${programmer} -p ${chip}" >&2
+	avrdude -v -c ${programmer} -p ${chip}
+elif [ ${cmd} == "flash" ]; then
+	if [ ${delay} == 0 ]; then
+		echo "avrdude -v -c ${programmer} -p ${chip} -U flash:w:${file}" >&2
+		avrdude -v -c ${programmer} -p ${chip} -U flash:w:${file}
 	else
-		echo "avrdude -v -c $programmer -p $chip -i $delay -U flash:w:$file" >&2
-		avrdude -v -c $programmer -p $chip -i $delay -U flash:w:$file
+		echo "avrdude -v -c ${programmer} -p ${chip} -i ${delay} -U flash:w:${file}" >&2
+		avrdude -v -c ${programmer} -p ${chip} -i ${delay} -U flash:w:${file}
 	fi
-elif [ "$cmd" == "upload" ]; then
+elif [ ${cmd} == "upload" ]; then
 	bootloader
-	avrdude -v -c avr109 -p $chip -P $port -U flash:w:$file
-elif [ "$cmd" == "minicom" ]; then
+	avrdude -v -c avr109 -p ${chip} -P ${port} -U flash:w:${file}
+elif [ ${cmd} == "minicom" ]; then
 	minicom -D ${port} -b ${baud}
-elif [ "$cmd" == "help" ]; then
+elif [ ${cmd} == "help" ]; then
 	usage
-elif [ "$cmd" == "show" ]; then
+elif [ ${cmd} == "show" ]; then
 	show_readconfig
-elif [ "$cmd" == "" ]; then
+elif [ ${cmd} == 0 ]; then
 	usage
 	show_readconfig
 else
