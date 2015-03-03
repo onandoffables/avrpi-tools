@@ -152,14 +152,14 @@ elif [ ${cmd} == "info" ]; then
 elif [ ${cmd} == "flash" ]; then
 	if [ ${delay} == 0 ]; then
 		echo "avrdude -v -c ${programmer} -p ${chip} -U flash:w:${file}" >&2
-		avrdude -v -c ${programmer} -p ${chip} -U flash:w:${file}
+		avrdude -v -c ${programmer} -p ${chip} -U flash:w:${file}:i
 	else
 		echo "avrdude -v -c ${programmer} -p ${chip} -i ${delay} -U flash:w:${file}" >&2
-		avrdude -v -c ${programmer} -p ${chip} -i ${delay} -U flash:w:${file}
+		avrdude -v -c ${programmer} -p ${chip} -i ${delay} -U flash:w:${file}:i
 	fi
 elif [ ${cmd} == "upload" ]; then
 	bootloader
-	avrdude -v -c avr109 -p ${chip} -P ${port} -U flash:w:${file}
+	avrdude -v -c avr109 -p ${chip} -P ${port} -U flash:w:${file}:i
 elif [ ${cmd} == "minicom" ]; then
 	minicom -D ${port} -b ${baud}
 elif [ ${cmd} == "screen" ]; then
