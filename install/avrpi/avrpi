@@ -71,6 +71,7 @@ usage()
 [options] is any of the following:
   -c            config        edit avrpi config file
   -f <file>     flash <file>  uploads <file> to AVRPI board
+  -u <file>     upload <file> uploads <file> using bootloader
   -i            info          show info about chip
   -r            reset         reset AVR chip
   -b            bootloader    enter bootloader mode (HWB/PE2 low)
@@ -82,7 +83,7 @@ usage()
 
 read_config
 
-while getopts ":hsibcmrdf:" opt; do
+while getopts ":hsibcmrdu:f:" opt; do
   case $opt in
     h)
       cmd="help"
@@ -111,6 +112,10 @@ while getopts ":hsibcmrdf:" opt; do
       ;;
     f)
       cmd="flash"
+      file="$OPTARG"
+      ;;
+    u)
+      cmd="upload"
       file="$OPTARG"
       ;;
     \?)
@@ -146,6 +151,10 @@ elif [ "$cmd" == "flash" ]; then
 		echo "avrdude -v -c $programmer -p $chip -i $delay -U flash:w:$file" >&2
 		avrdude -v -c $programmer -p $chip -i $delay -U flash:w:$file
 	fi
+elif [ "$cmd" == "upload" ]; then
+	bootloader
+	# needs a port it can find, but is ignored
+	avrdude -v -c avr109 -p $chip -P $port -U flash:w:$file
 elif [ "$cmd" == "minicom" ]; then
 	minicom -D ${port} -b ${baud}
 elif [ "$cmd" == "help" ]; then

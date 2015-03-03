@@ -314,7 +314,10 @@ fuse_menu()
 		if [ ${fuse} == "f" ]; then
 			set_fuse ${chip} 0xcb 0xd8 0xde
 		elif [ ${fuse} == "g" ]; then
-			set_fuse ${chip} 0xc3 0xd8 0xde
+			# always reset to bootloader
+			#set_fuse ${chip} 0xc3 0xd8 0xde
+			# only reset to bootloader with avrpi -b
+			set_fuse ${chip} 0xc3 0xd9 0xde
 		else
 			no_option $fuse
 		fi
