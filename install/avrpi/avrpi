@@ -69,22 +69,23 @@ usage()
 	echo "Usage: avrpi [options] <filename>
 
 [options] is any of the following:
-  -c            config        edit avrpi config file
-  -f <file>     flash <file>  flash <file> to avrpi board
-  -u <file>     upload <file> upload <file> using bootloader
-  -i            info          show info about chip
-  -r            reset         reset AVR chip
-  -b            bootloader    enter bootloader mode (HWB fuses set)
-  -m            minicom       start minicom on ${port} @ ${baud}
-  -h            help          show this info
-  -s            show          show config
+  -f <file>   flash <file>    flash <file> to avrpi board
+  -u <file>   upload <file>   upload <file> using bootloader
+  -i          info            show info about chip
+  -r          reset           reset AVR chip
+  -b          bootloader      enter bootloader mode (HWB fuses set)
+  -m          minicom         start minicom on ${port} @ ${baud}
+  -n          screen          start screen on ${port} @ ${baud}
+  -h          help            show this info
+  -c          config          edit avrpi config file
+  -s          show            show config
 " >&2
 }
 
 read_config
 cmd=0
 
-while getopts ":hsibcmrdu:f:" opt; do
+while getopts ":hsibcmnrdu:f:" opt; do
   case $opt in
     h)
       cmd="help"
@@ -106,6 +107,10 @@ while getopts ":hsibcmrdu:f:" opt; do
     m)
       cmd="minicom"
       echo "start minicom" >&2
+      ;;
+    n)
+      cmd="screen"
+      echo "start screen" >&2
       ;;
     r)
       cmd="reset"
@@ -157,6 +162,8 @@ elif [ ${cmd} == "upload" ]; then
 	avrdude -v -c avr109 -p ${chip} -P ${port} -U flash:w:${file}
 elif [ ${cmd} == "minicom" ]; then
 	minicom -D ${port} -b ${baud}
+elif [ ${cmd} == "screen" ]; then
+	screen ${port} ${baud}
 elif [ ${cmd} == "help" ]; then
 	usage
 elif [ ${cmd} == "show" ]; then
