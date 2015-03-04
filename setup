@@ -285,8 +285,14 @@ fuse_menu()
 	fi
 	
 	echo ""
+	echo "    q)    cancel"
+	echo ""
 	echo "Enter the fuse setting you want:"
 	read fuse
+
+	if [ ${fuse} == "q" ]; then
+		return
+	fi
 
 	#set_fuse efuse hfuse lfuse
 	if [ ${board} == "avrpi168" ]; then
