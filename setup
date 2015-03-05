@@ -216,11 +216,10 @@ install_avrpi()
 	sudo cp avrpi.cfg /etc/avrpi.cfg
 	echo "Copy avrpi to /usr/local/bin/avrpi" >&2
 	sudo cp avrpi /usr/local/bin/avrpi
-	
-	avrpi -s
-	
 	echo "Cleaning up local avrpi.cfg..." >&2
 	rm avrpi.cfg
+	
+	avrpi -s
 	
 	cd ../..
 }
@@ -264,6 +263,12 @@ set_fuse()
 {
 	#from factory: (E:xx, H:xx, L:xx)
 	avrdude -i16 -c linuxgpio -p $1 -U efuse:w:$2:m -U hfuse:w:$3:m -U lfuse:w:$4:m
+}
+
+burn_caterina()
+{
+	caterina=install/bootloader/caterina/bin/Caterina.hex
+	avrdude -i16 -c linuxgpio -p atmega32u4 -U flash:w:${caterina}:i
 }
 
 no_option()
@@ -383,62 +388,58 @@ banner()
 	echo ""
 }
 
+set_board()
+{
+	board=$1
+	chip=$2
+	speed=$3
+}
+
 board_menu()
 {
 	banner
 
-	#echo "    0)    AVRPi-168 (ATmega168p @ 8/12/16 MHz)"
+#	echo "  AVRPi-168"
+#	echo "    0)    ATmega168p no crystal @ 8MHz max."
+#	echo "    1)    ATmega168p @ 8MHz"
+#	echo "    2)    ATmega168p @ 12MHz"
+#	echo "    3)    ATmega168p @ 16MHz"
+#	echo ""
 	echo "  AVRPi-328"
-	echo "    1)    ATmega328p @ 8MHz"
-	echo "    2)    ATmega328p @ 12MHz"
-	echo "    3)    ATmega328p @ 16MHz (overclocked)"
+	echo "    a)    ATmega328p no crystal @ 8MHz max."
+	echo "    b)    ATmega328p @ 8MHz"
+	echo "    c)    ATmega328p @ 12MHz"
+	echo "    d)    ATmega328p @ 16MHz (overclocked)"
 	echo ""
 	echo "  AVRPi-32U4"
-	echo "    4)    ATmega32U4 @ 8 MHz"
+	echo "    m)    ATmega32U4 @ 8 MHz"
 	echo ""
-	echo "  Gertware"
-	echo "    5)    Gertboard (ATmega328p @ 12 MHz)"
-	echo "    6)    Gertduino (ATmega328p @ 16 MHz)"
-	echo "    7)    Gertduino48 (ATmega48p @ 1 MHz)"
-	echo "    8)    Gertduino48 (ATmega48p @ 8 MHz)"
+	echo "  Others"
+	echo "    u)    Gertboard (ATmega328p @ 12 MHz)"
+	echo "    v)    Gertduino (ATmega328p @ 16 MHz)"
+	echo "    w)    Gertduino48 (ATmega48p no crystal @ 8 MHz max.)"
 	echo ""
 
 	echo "What board do you have:"
 	read boardnum
 
-	#if [ ${boardnum} == "0" ]; then
-	#	board="avrpi168"
-	#	chip="atmega168p"
-	#	speed="8000000"
-	#fi
-	if [ ${boardnum} == "1" ]; then
-		board="avrpi328"
-		chip="atmega328p"
-		speed="8000000"
-	elif [ ${boardnum} == "2" ]; then
-		board="avrpi328"
-		chip="atmega328p"
-		speed="12000000"
-	elif [ ${boardnum} == "3" ]; then
-		board="avrpi328"
-		chip="atmega328p"
-		speed="16000000"
-	elif [ ${boardnum} == "4" ]; then
-		board="avrpi32u4"
-		chip="atmega32u4"
-		speed="8000000"
-	elif [ ${boardnum} == "5" ]; then
-		board="gertboard328"
-		chip="atmega328p"
-		speed="12000000"
-	elif [ ${boardnum} == "6" ]; then
-		board="gertduino328"
-		chip="atmega328p"
-		speed="16000000"
-	elif [ ${boardnum} == "7" ]; then
-		board="gertduino48"
-		chip="atmega48p"
-		speed="8000000"
+	#set_board "board" "chip" "speed"
+	if [ ${boardnum} == "a" ]; then
+		set_board "avrpi328" "atmega328p" "8000000"
+	elif [ ${boardnum} == "b" ]; then
+		set_board "avrpi328" "atmega328p" "8000000"
+	elif [ ${boardnum} == "c" ]; then
+		set_board "avrpi328" "atmega328p" "12000000"
+	elif [ ${boardnum} == "d" ]; then
+		set_board "avrpi328" "atmega328p" "16000000"
+	elif [ ${boardnum} == "m" ]; then
+		set_board "avrpi32u4" "atmega32u4" "8000000"
+	elif [ ${boardnum} == "u" ]; then
+		set_board "gertboard328" "atmega328p" "12000000"
+	elif [ ${boardnum} == "v" ]; then
+		set_board "gertduino328" "atmega328p" "16000000"
+	elif [ ${boardnum} == "w" ]; then
+		set_board "gertduino48" "atmega48p" "8000000"
 	else
 		echo "Error. Please enter the number of the board."
 		no_option ${boardnum}
@@ -459,6 +460,9 @@ main_menu()
 		echo "    f)    set fuses for ${chip} on ${board}"
 	fi
 	echo "    t)    make + upload test/blinky.hex"
+	if [ ${board} == "avrpi32u4" ]; then
+		echo "    o)    install Caterina bootloader"
+	fi
 	echo ""
 	echo "  Custom install:"
 	echo "    a)    apt-get all dependencies"
@@ -527,6 +531,8 @@ while [ ${option} != "q" ]; do
 			board_menu
 		fi
 		fuse_menu
+	elif [ ${option} == "o" ]; then
+		burn_caterina
 	elif [ ${option} == "t" ]; then
 		if [ ${board} == 0 ]; then
 			board_menu
