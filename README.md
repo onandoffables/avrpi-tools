@@ -49,9 +49,7 @@ After you run ./setup, a menu appears. Depending on the board selected, the menu
 	
 	  Optional extra:
 	    w)    install wiringPi
-	    x)    uninstall wiringPi
 	    v)    install avrpi tool (and save board settings)
-	    u)    uninstall avrpi tool
 	
 	  Software and projects:
 	    m)    install Arduino-Makefile
