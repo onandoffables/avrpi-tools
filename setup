@@ -132,6 +132,22 @@ install_wiringpi()
 	cd ..
 }
 
+uninstall_wiringpi()
+{
+	cd install/
+
+	if [ -d wiringPi ]; then
+		echo "wiringPi found. Uninstalling..."
+		cd wiringPi
+		./build uninstall
+		cd ..
+	else
+		echo "No wiringPi source directory found."
+	fi
+	
+	cd ..
+}
+
 install_dfu_programmer()
 {
 	cd install/
@@ -153,6 +169,30 @@ install_dfu_programmer()
 	cd .. #dfu-programmer
 
 	cd .. #install
+}
+
+uninstall_avrpi()
+{
+	if [ -f /etc/avrpi.cfg.bak ]; then
+		echo "/etc/avrpi.cfg.bak found. Removing..." >&2
+		sudo rm /etc/avrpi.cfg.bak
+	else
+		echo "/etc/avrpi.cfg.bak not found. Skipping..." >&2
+	fi
+	
+	if [ -f /etc/avrpi.cfg ]; then
+		echo "/etc/avrpi.cfg found. Removing..." >&2
+		sudo rm /etc/avrpi.cfg
+	else
+		echo "/etc/avrpi.cfg not found. Skipping..." >&2
+	fi
+	
+	if [ -f /usr/local/bin/avrpi ]; then
+		echo "/usr/local/bin/avrpi found. Removing..." >&2
+		sudo rm /usr/local/bin/avrpi
+	else
+		echo "/usr/local/bin/avrpi not found. Skipping..." >&2
+	fi
 }
 
 install_avrpi()
@@ -308,6 +348,9 @@ fuse_menu()
 	echo "Enter the fuse setting you want:"
 	read fuse
 
+	if [ -z ${fuse} ]; then
+		return
+	fi
 	if [ ${fuse} == "q" ]; then
 		return
 	fi
@@ -422,6 +465,10 @@ board_menu()
 
 	echo "What board do you have:"
 	read boardnum
+	
+	if [ -z ${boardnum} ]; then
+		exit
+	fi
 
 	#set_board "board" "chip" "speed"
 	if [ ${boardnum} == "a" ]; then
@@ -472,7 +519,9 @@ main_menu()
 	echo ""
 	echo "  Optional extra:"
 	echo "    w)    install wiringPi"
+	echo "    x)    uninstall wiringPi"
 	echo "    v)    install avrpi tool"
+	echo "    u)    uninstall avrpi tool"
 	if [ ${board} == "avrpi32u4" ]; then
 		echo "    d)    install dfu-programmer"
 	fi
@@ -515,6 +564,8 @@ while [ ${option} != "q" ]; do
 		patch_arduino
 	elif [ ${option} == "w" ]; then
 		install_wiringpi
+	elif [ ${option} == "x" ]; then
+		uninstall_wiringpi
 	elif [ ${option} == "d" ]; then
 		install_dfu_programmer
 	elif [ ${option} == "v" ]; then
@@ -522,6 +573,8 @@ while [ ${option} != "q" ]; do
 			board_menu
 		fi
 		install_avrpi
+	elif [ ${option} == "u" ]; then
+		uninstall_avrpi
 
 	elif [ ${option} == "s" ]; then
 		board_menu
