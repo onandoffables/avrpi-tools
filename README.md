@@ -37,29 +37,30 @@ After you run ./setup, a menu appears. Depending on the board selected, the menu
 	    e)    Arduino IDE + avrdude
 	
 	  First time - fuses and test:
-	    s)    change to different board/chip
-	    f)    set fuses for atmega32u4 on avrpi32u4
+	    s)    set board/chip/speed
+	    f)    set fuses for your board
 	    t)    make + upload test/blinky.hex
 	
 	  Custom install:
-	    a)    apt-get all dependencies
-	    p)    patch arduino
+	    a)    apt-get all dependencies and toolchain (without Arduino)
 	    b)    install pre-compiled avrdude binary
 	    c)    compile + install avrdude from source
+	    p)    patch arduino
 	
 	  Optional extra:
 	    w)    install wiringPi
-	    v)    install avrpi tool
-	    d)    install dfu-programmer
+	    x)    uninstall wiringPi
+	    v)    install avrpi tool (and save board settings)
+	    u)    uninstall avrpi tool
 	
 	  Software and projects:
 	    m)    install Arduino-Makefile
-	    l)    install LUFA-AVRPI32U4
 	
 	    q)    quit
 	
 	Enter your choice:
 
-You have the option of installing everything in 1 easy step. Choose 'e' for this. That patches the Arduino IDE and libraries and installs a pre-compiled version of avrdude. But you can also compile avrdude from source. This will only take a couple of minutes anyway.
 
-Use the 'custom install' options to tweak the installation process. For example, if you only want to install linuxgpio-enabled avrdude without the Arduino IDE and library.
+You have the option of installing everything in 1 easy step. Choose 'e' for this. That patches the Arduino IDE and libraries and installs a pre-compiled version of avrdude.
+
+Use the 'custom install' options to tweak the installation process. For example, if you only want to install linuxgpio-enabled avrdude without the Arduino IDE and library (option 'b' or 'c').

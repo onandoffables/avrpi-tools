@@ -25,16 +25,29 @@ if [ -f /etc/avrpi.cfg ]; then
 	source /etc/avrpi.cfg
 fi
 
+
+apt_get_dependencies()
+{
+	sudo apt-get install -y libusb-1.0-0-dev libftdi-dev autoconf bison flex bc # compile avrdude
+	sudo apt-get install -y avr-libc binutils-avr gcc-avr avra # avr-gcc and friends
+	#sudo apt-get install -y gdb-avr simulavr # debugging
+}
+
+apt_get_tools()
+{
+	sudo apt-get install -y cmake minicom screen evtest # misc tools
+}
+
+apt_get_arduino()
+{
+	sudo apt-get install -y arduino # Arduino IDE
+}
+
 apt_get_everything()
 {
-#	sudo apt-get update
-#	sudo apt-get upgrade
-	sudo apt-get install -y arduino # Arduino IDE
-	sudo apt-get install -y libftdi1 # deps for avrdude.deb
-	sudo apt-get install -y avr-libc binutils-avr gcc-avr avra # avr-gcc and friends
-#	sudo apt-get install -y gdb-avr simulavr # debugging
-	sudo apt-get install -y cmake minicom screen bc evtest # misc tools
-	sudo apt-get install -y libusb-1.0-0-dev libftdi-dev autoconf bison flex # compile avrdude
+	apt_get_dependencies
+	apt_get_arduino
+	apt_get_tools
 }
 
 install_avrdude_source()
@@ -512,15 +525,15 @@ main_menu()
 	fi
 	echo ""
 	echo "  Custom install:"
-	echo "    a)    apt-get all dependencies"
-	echo "    p)    patch arduino"
+	echo "    a)    apt-get all dependencies and toolchain (without Arduino)"
 	echo "    b)    install pre-compiled avrdude binary"
 	echo "    c)    compile + install avrdude from source"
+	echo "    p)    patch arduino"
 	echo ""
 	echo "  Optional extra:"
 	echo "    w)    install wiringPi"
 	echo "    x)    uninstall wiringPi"
-	echo "    v)    install avrpi tool"
+	echo "    v)    install avrpi tool (and save board settings)"
 	echo "    u)    uninstall avrpi tool"
 	if [ ${board} == "avrpi32u4" ]; then
 		echo "    d)    install dfu-programmer"
@@ -555,7 +568,7 @@ while [ ${option} != "q" ]; do
 		install_everything
 
 	elif [ ${option} == "a" ]; then
-		apt_get_everything
+		apt_get_dependencies
 	elif [ ${option} == "c" ]; then
 		install_avrdude_source
 	elif [ ${option} == "b" ]; then
