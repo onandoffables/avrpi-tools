@@ -30,6 +30,7 @@ apt_get_dependencies()
 {
 	sudo apt-get install -y libusb-1.0-0-dev libftdi-dev autoconf bison flex bc # compile avrdude
 	sudo apt-get install -y avr-libc binutils-avr gcc-avr avra # avr-gcc and friends
+	sudo apt-get install -y git-core make # ubuntu_armhf doesn't have these
 	#sudo apt-get install -y gdb-avr simulavr # debugging
 }
 
@@ -40,7 +41,7 @@ apt_get_tools()
 
 apt_get_arduino()
 {
-	sudo apt-get install -y arduino # Arduino IDE
+	sudo apt-get install arduino # Arduino IDE
 }
 
 apt_get_everything()
