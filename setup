@@ -214,8 +214,8 @@ install_avrpi()
 	cd install/avrpi
 
 	if [ -f /etc/avrpi.cfg ]; then
-		echo "Old /etc/avrpi.cfg found. Backing up..." >&2
-		sudo mv /etc/avrpi.cfg /etc/avrpi.cfg.bak
+		echo "Old /etc/avrpi.cfg found. Overwriting..." >&2
+		#sudo mv /etc/avrpi.cfg /etc/avrpi.cfg.bak
 	else
 		echo "/etc/avrpi.cfg not found. Installing avrpi default config..." >&2
 	fi
