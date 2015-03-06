@@ -509,7 +509,7 @@ board_menu()
 main_menu()
 {
 	echo "  Install everything in 1 easy step:"
-	echo "    e)    Arduino IDE + avrdude"
+	echo "    e)    Arduino IDE/libs + avrdude"
 	echo ""
 	echo "  First time - fuses and test:"
 	if [ ${board} == 0 ]; then
@@ -531,10 +531,16 @@ main_menu()
 	echo "    p)    patch arduino"
 	echo ""
 	echo "  Optional extra:"
-	echo "    w)    install wiringPi"
-	echo "    x)    uninstall wiringPi"
-	echo "    v)    install avrpi tool (and save board settings)"
-	echo "    u)    uninstall avrpi tool"
+	if [ -f /usr/local/bin/gpio ]; then
+		echo "    x)    uninstall wiringPi"
+	else
+		echo "    w)    install wiringPi"
+	fi
+	if [ -f /usr/local/bin/avrpi ]; then
+		echo "    u)    uninstall avrpi tool"
+	else
+		echo "    v)    install avrpi tool (and save board settings)"
+	fi
 	if [ ${board} == "avrpi32u4" ]; then
 		echo "    d)    install dfu-programmer"
 	fi
