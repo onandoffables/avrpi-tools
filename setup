@@ -337,21 +337,17 @@ fuse_menu()
 
 	echo "  Fuse settings:"
 
-	if [ ${board} == "avrpi168" ]; then
+	if [ ${chip} == "atmega168p" ]; then
 		echo "    f)    set ATmega168p fuses (with crystal)"
-	elif [ ${board} == "avrpi328" ]; then
+	elif [ ${chip} == "atmega328p" ]; then
 		echo "    a)    set ATmega328p fuses (1 MHz, no crystal)"
 		echo "    b)    set ATmega328p fuses (8 MHz, no crystal)"
 		echo "    f)    set ATmega328p fuses (8-16 MHz with crystal)"
 		echo "    g)    set ATmega328p fuses (8-16 MHz with crystal + preserve EEPROM)"
-	elif [ ${board} == "avrpi32u4" ]; then
+	elif [ ${chip} == "atmega32u4" ]; then
 		echo "    f)    set ATmega32U4 fuses (with crystal. recommended)"
 		echo "    g)    set ATmega32U4 fuses (with crystal + HWB enabled)"
-	elif [ ${board} == "gertboard328" ]; then
-		echo "    f)    set ATmega328p fuses (with crystal)"
-	elif [ ${board} == "gertduino328" ]; then
-		echo "    f)    set ATmega328p fuses (with crystal)"
-	elif [ ${board} == "gertduino48" ]; then
+	elif [ ${chip} == "atmega48p" ]; then
 		echo "    f)    set ATmega48p fuses (1 MHz)"
 		echo "    g)    set ATmega48p fuses (8 MHz)"
 	fi
@@ -370,14 +366,14 @@ fuse_menu()
 	fi
 
 	#set_fuse efuse hfuse lfuse
-	if [ ${board} == "avrpi168" ]; then
+	if [ ${chip} == "atmega168p" ]; then
 		#from factory: (E:01, H:DF, L:62)
 		if [ ${fuse} == "f" ]; then
 			set_fuse ${chip} 0x00 0xDF 0xE7
 		else
 			no_option $fuse
 		fi
-	elif [ ${board} == "avrpi328" ]; then
+	elif [ ${chip} == "atmega328p" ]; then
 		#from factory: (E:07, H:D9, L:62)
 		if [ ${fuse} == "a" ]; then
 			set_fuse ${chip} 0x07 0xD9 0x62
@@ -390,7 +386,7 @@ fuse_menu()
 		else
 			no_option $fuse
 		fi
-	elif [ ${board} == "avrpi32u4" ]; then
+	elif [ ${chip} == "atmega32u4" ]; then
 		#from factory: (E:03, H:99, L:5E)
 		if [ ${fuse} == "f" ]; then
 			set_fuse ${chip} 0xcb 0xd8 0xde
@@ -402,28 +398,7 @@ fuse_menu()
 		else
 			no_option $fuse
 		fi
-	elif [ ${board} == "gertboard168" ]; then
-		#from factory: (E:F9, H:DF, L:62)
-		if [ ${fuse} == "f" ]; then
-			set_fuse ${chip} 0x00 0xDF 0xE7
-		else
-			no_option $fuse
-		fi
-	elif [ ${board} == "gertboard328" ]; then
-		#from factory: (E:07, H:D9, L:62)
-		if [ ${fuse} == "f" ]; then
-			set_fuse ${chip} 0x07 0xD9 0xE7
-		else
-			no_option $fuse
-		fi
-	elif [ ${board} == "gertduino328" ]; then
-		#from factory: (E:07, H:D9, L:62)
-		if [ ${fuse} == "f" ]; then
-			set_fuse ${chip} 0x07 0xD9 0xE7
-		else
-			no_option $fuse
-		fi
-	elif [ ${board} == "gertduino48" ]; then
+	elif [ ${chip} == "atmega48p" ]; then
 		#from factory: (E:FF, H:DF, L:62)
 		if [ ${fuse} == "f" ]; then
 			set_fuse ${chip} 0xFF 0xDF 0x62
@@ -513,7 +488,7 @@ main_menu()
 	echo "    e)    Arduino IDE/libs + avrdude"
 	echo ""
 	echo "  Custom install:"
-	echo "    a)    apt-get all dependencies and toolchain (without Arduino)"
+	echo "    a)    apt-get dependencies and AVR toolchain (without Arduino)"
 	echo "    b)    install pre-compiled avrdude binary"
 	echo "    c)    compile + install avrdude from source"
 	echo "    p)    patch arduino"
