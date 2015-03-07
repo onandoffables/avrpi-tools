@@ -512,6 +512,12 @@ main_menu()
 	echo "  Install everything in 1 easy step:"
 	echo "    e)    Arduino IDE/libs + avrdude"
 	echo ""
+	echo "  Custom install:"
+	echo "    a)    apt-get all dependencies and toolchain (without Arduino)"
+	echo "    b)    install pre-compiled avrdude binary"
+	echo "    c)    compile + install avrdude from source"
+	echo "    p)    patch arduino"
+	echo ""
 	echo "  First time - fuses and test:"
 	if [ ${board} == 0 ]; then
 		echo "    s)    set board/chip/speed"
@@ -524,12 +530,6 @@ main_menu()
 	if [ ${board} == "avrpi32u4" ]; then
 		echo "    o)    install Caterina bootloader"
 	fi
-	echo ""
-	echo "  Custom install:"
-	echo "    a)    apt-get all dependencies and toolchain (without Arduino)"
-	echo "    b)    install pre-compiled avrdude binary"
-	echo "    c)    compile + install avrdude from source"
-	echo "    p)    patch arduino"
 	echo ""
 	echo "  Optional extra:"
 	if [ -f /usr/local/bin/gpio ]; then
