@@ -193,20 +193,24 @@ uninstall_avrpi()
 	else
 		echo "/etc/avrpi.cfg.bak not found. Skipping..." >&2
 	fi
-	
+
 	if [ -f /etc/avrpi.cfg ]; then
 		echo "/etc/avrpi.cfg found. Removing..." >&2
 		sudo rm /etc/avrpi.cfg
 	else
 		echo "/etc/avrpi.cfg not found. Skipping..." >&2
 	fi
-	
+
 	if [ -f /usr/local/bin/avrpi ]; then
 		echo "/usr/local/bin/avrpi found. Removing..." >&2
 		sudo rm /usr/local/bin/avrpi
 	else
 		echo "/usr/local/bin/avrpi not found. Skipping..." >&2
 	fi
+
+	board=0
+	chip=0
+	speed=0
 }
 
 install_avrpi()
@@ -338,20 +342,24 @@ fuse_menu()
 	echo "  Fuse settings:"
 
 	if [ ${chip} == "atmega168p" ]; then
-		echo "    f)    set ATmega168p fuses (with crystal)"
+		echo "    c)    set ATmega168p fuses (with crystal)"
 	elif [ ${chip} == "atmega328p" ]; then
 		echo "    a)    set ATmega328p fuses (1 MHz, no crystal)"
 		echo "    b)    set ATmega328p fuses (8 MHz, no crystal)"
-		echo "    f)    set ATmega328p fuses (8-16 MHz with crystal)"
-		echo "    g)    set ATmega328p fuses (8-16 MHz with crystal + preserve EEPROM)"
+		echo "    c)    set ATmega328p fuses (8-16 MHz with crystal)"
+		echo "    d)    set ATmega328p fuses (8-16 MHz with crystal + preserve EEPROM)"
 	elif [ ${chip} == "atmega32u4" ]; then
-		echo "    f)    set ATmega32U4 fuses (with crystal. recommended)"
-		echo "    g)    set ATmega32U4 fuses (with crystal + HWB enabled)"
+		echo "    c)    set ATmega32U4 fuses (with crystal. recommended)"
+		echo "    d)    set ATmega32U4 fuses (with crystal + HWB enabled)"
 	elif [ ${chip} == "atmega48p" ]; then
-		echo "    f)    set ATmega48p fuses (1 MHz)"
-		echo "    g)    set ATmega48p fuses (8 MHz)"
+		echo "    c)    set ATmega48p fuses (1 MHz, no crystal)"
+		echo "    d)    set ATmega48p fuses (8 MHz, no crystal)"
+	else
+		echo "    a)    set ${chip} fuses (1 MHz, no crystal)"
+		echo "    b)    set ${chip} fuses (8 MHz, no crystal)"
+		echo "    c)    set ${chip} fuses (8-16 MHz with crystal)"
 	fi
-	
+
 	echo ""
 	echo "    q)    cancel"
 	echo ""
@@ -368,7 +376,7 @@ fuse_menu()
 	#set_fuse efuse hfuse lfuse
 	if [ ${chip} == "atmega168p" ]; then
 		#from factory: (E:01, H:DF, L:62)
-		if [ ${fuse} == "f" ]; then
+		if [ ${fuse} == "c" ]; then
 			set_fuse ${chip} 0x00 0xDF 0xE7
 		else
 			no_option $fuse
@@ -379,18 +387,18 @@ fuse_menu()
 			set_fuse ${chip} 0x07 0xD9 0x62
 		elif [ ${fuse} == "b" ]; then
 			set_fuse ${chip} 0x07 0xD9 0xE2
-		elif [ ${fuse} == "f" ]; then
+		elif [ ${fuse} == "c" ]; then
 			set_fuse ${chip} 0x07 0xD9 0xE7
-		elif [ ${fuse} == "g" ]; then
+		elif [ ${fuse} == "d" ]; then
 			set_fuse ${chip} 0x07 0xD1 0xE7
 		else
 			no_option $fuse
 		fi
 	elif [ ${chip} == "atmega32u4" ]; then
 		#from factory: (E:03, H:99, L:5E)
-		if [ ${fuse} == "f" ]; then
+		if [ ${fuse} == "c" ]; then
 			set_fuse ${chip} 0xcb 0xd8 0xde
-		elif [ ${fuse} == "g" ]; then
+		elif [ ${fuse} == "d" ]; then
 			# always reset to bootloader
 			#set_fuse ${chip} 0xc3 0xd8 0xde
 			# only reset to bootloader with avrpi -b
@@ -400,13 +408,29 @@ fuse_menu()
 		fi
 	elif [ ${chip} == "atmega48p" ]; then
 		#from factory: (E:FF, H:DF, L:62)
-		if [ ${fuse} == "f" ]; then
+		if [ ${fuse} == "c" ]; then
 			set_fuse ${chip} 0xFF 0xDF 0x62
-		elif [ ${fuse} == "g" ]; then
+		elif [ ${fuse} == "d" ]; then
 			set_fuse ${chip} 0xFF 0xDF 0xE2
 		else
 			no_option $fuse
 		fi
+
+	elif [ ${chip} == "attiny85" ]; then
+		echo "not implemented yet. Sorry."
+		exit 1;
+	elif [ ${chip} == "attiny2313" ]; then
+		echo "not implemented yet. Sorry."
+		exit 1;
+	elif [ ${chip} == "at90usb162" ]; then
+		echo "not implemented yet. Sorry."
+		exit 1;
+	elif [ ${chip} == "at90usb646" ]; then
+		echo "not implemented yet. Sorry."
+		exit 1;
+	else
+		echo "Unkown chip ('${chip}')."
+		exit 1;
 	fi
 }
 
@@ -425,6 +449,62 @@ set_board()
 	board=$1
 	chip=$2
 	speed=$3
+}
+
+custom_menu()
+{
+	banner
+
+	echo "  Atmega168p"
+	echo "    a)    ATmega168p @ 8MHz max. (no crystal)"
+	echo "    b)    ATmega168p @ 20MHz max. (with crystal)"
+	echo ""
+	echo "  ATtiny"
+	echo "    g)    ATtiny85 @ 8MHz max. (no crystal)"
+	echo "    h)    ATtiny85 @ 20MHz max. (with crystal)"
+	echo "    i)    ATtiny2313 @ 8MHz max. (no crystal)"
+	echo "    j)    ATtiny2313 @ 20MHz max. (with crystal)"
+	echo ""
+	echo "  AT90USB"
+	echo "    m)    AT90USB162 @ 8MHz max. (no crystal)"
+	echo "    n)    AT90USB162 @ 20MHz max. (with crystal)"
+	echo "    o)    AT90USB646 @ 8MHz max. (no crystal)"
+	echo "    p)    AT90USB646 @ 20MHz max. (with crystal)"
+	echo ""
+
+	echo "What board/chip do you have:"
+	read boardnum
+	
+	if [ -z ${boardnum} ]; then
+		exit
+	fi
+	
+	if [ ${boardnum} == "a" ]; then
+		set_board "custom" "atmega168p" "8000000"
+	elif [ ${boardnum} == "b" ]; then
+		set_board "custom" "atmega168p" "8000000"
+
+	elif [ ${boardnum} == "g" ]; then
+		set_board "custom" "attiny85" "8000000"
+	elif [ ${boardnum} == "h" ]; then
+		set_board "custom" "attiny85" "8000000"
+	elif [ ${boardnum} == "i" ]; then
+		set_board "custom" "attiny2313" "8000000"
+	elif [ ${boardnum} == "j" ]; then
+		set_board "custom" "attiny2313" "8000000"
+
+	elif [ ${boardnum} == "m" ]; then
+		set_board "custom" "at90usb162" "8000000"
+	elif [ ${boardnum} == "n" ]; then
+		set_board "custom" "at90usb162" "8000000"
+	elif [ ${boardnum} == "o" ]; then
+		set_board "custom" "at90usb646" "8000000"
+	elif [ ${boardnum} == "p" ]; then
+		set_board "custom" "at90usb646" "8000000"
+	else
+		echo "Error. Please enter the number of the board."
+		no_option ${boardnum}
+	fi
 }
 
 board_menu()
@@ -451,8 +531,11 @@ board_menu()
 	echo "    v)    Gertduino (ATmega328p @ 16 MHz)"
 	echo "    w)    Gertduino48 (ATmega48p no crystal @ 8 MHz max.)"
 	echo ""
+	echo "  Custom chips"
+	echo "    z)    ATmega, ATtiny, AT90USB"
+	echo ""
 
-	echo "What board do you have:"
+	echo "What board/chip do you have:"
 	read boardnum
 	
 	if [ -z ${boardnum} ]; then
@@ -476,6 +559,9 @@ board_menu()
 		set_board "gertduino328" "atmega328p" "16000000"
 	elif [ ${boardnum} == "w" ]; then
 		set_board "gertduino48" "atmega48p" "8000000"
+
+	elif [ ${boardnum} == "z" ]; then
+		custom_menu
 	else
 		echo "Error. Please enter the number of the board."
 		no_option ${boardnum}
@@ -499,7 +585,7 @@ main_menu()
 		echo "    f)    set fuses for your board"
 	else
 		echo "    s)    change to different board/chip"
-		echo "    f)    set fuses for ${chip} on ${board}"
+		echo "    f)    set fuses for ${chip} on ${board} board"
 	fi
 	echo "    t)    make + upload test/blinky.hex"
 	if [ ${board} == "avrpi32u4" ]; then
@@ -515,7 +601,7 @@ main_menu()
 	if [ -f /usr/local/bin/avrpi ]; then
 		echo "    u)    uninstall avrpi tool"
 	else
-		echo "    v)    install avrpi tool (and save board settings)"
+		echo "    v)    install avrpi tool (save board settings)"
 	fi
 	if [ ${board} == "avrpi32u4" ]; then
 		echo "    d)    install dfu-programmer"
