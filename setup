@@ -97,9 +97,9 @@ patch_arduino()
 test_blinky()
 {
 	cd src/test/
-	if [ ${board} == "avrpi168" ]; then
+	if [ ${chip} == "atmega168p" ]; then
 		BRD=0 make flash
-	elif [ ${board} == "avrpi328" ]; then
+	elif [ ${chip} == "atmega328p" ]; then
 		if [ ${speed} == "12000000" ]; then
 			BRD=2 make flash
 		elif [ ${speed} == "16000000" ]; then
@@ -108,17 +108,16 @@ test_blinky()
 			# 8000000
 			BRD=1 make flash
 		fi
-	elif [ ${board} == "avrpi32u4" ]; then
+	elif [ ${chip} == "atmega32u4" ]; then
 		BRD=4 make flash
-	elif [ ${board} == "gertboard328" ]; then
-		BRD=5 make flash
-	elif [ ${board} == "gertduino328" ]; then
-		BRD=6 make flash
-		avrpi -r
 	else
 		echo "No blinky for you. Sorry."
 		cd ../..
 		return
+	fi
+
+	if [ ${board} == "gertduino328" ]; then
+		avrpi -r
 	fi
 
 	make clean
@@ -530,6 +529,7 @@ board_menu()
 	echo "    u)    Gertboard (ATmega328p @ 12 MHz)"
 	echo "    v)    Gertduino (ATmega328p @ 16 MHz)"
 	echo "    w)    Gertduino48 (ATmega48p no crystal @ 8 MHz max.)"
+	echo "    x)    RasPiO Duino (ATmega328p @ 12 MHz)"
 	echo ""
 	echo "  Custom chips"
 	echo "    z)    ATmega, ATtiny, AT90USB"
@@ -559,6 +559,8 @@ board_menu()
 		set_board "gertduino328" "atmega328p" "16000000"
 	elif [ ${boardnum} == "w" ]; then
 		set_board "gertduino48" "atmega48p" "8000000"
+	elif [ ${boardnum} == "x" ]; then
+		set_board "raspioduino" "atmega328p" "12000000"
 
 	elif [ ${boardnum} == "z" ]; then
 		custom_menu
