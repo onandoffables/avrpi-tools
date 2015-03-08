@@ -470,12 +470,17 @@ custom_menu()
 	echo "    o)    AT90USB646 @ 8MHz max. (no crystal)"
 	echo "    p)    AT90USB646 @ 20MHz max. (with crystal)"
 	echo ""
+	echo "    q)    back"
+	echo ""
 
 	echo "What board/chip do you have:"
 	read boardnum
 	
 	if [ -z ${boardnum} ]; then
 		exit
+	fi
+	if [ ${boardnum} == "q" ]; then
+		return
 	fi
 	
 	if [ ${boardnum} == "a" ]; then
@@ -534,12 +539,17 @@ board_menu()
 	echo "  Custom chips"
 	echo "    z)    ATmega, ATtiny, AT90USB"
 	echo ""
+	echo "    q)    back"
+	echo ""
 
 	echo "What board/chip do you have:"
 	read boardnum
 	
 	if [ -z ${boardnum} ]; then
 		exit
+	fi
+	if [ ${boardnum} == "q" ]; then
+		return
 	fi
 
 	#set_board "board" "chip" "speed"
@@ -655,18 +665,24 @@ while [ ${option} != "q" ]; do
 		if [ ${board} == 0 ]; then
 			board_menu
 		fi
-		install_avrpi
+		if [ ! ${board} == 0 ]; then
+			install_avrpi
+		fi
 	elif [ ${option} == "u" ]; then
 		uninstall_avrpi
 
 	elif [ ${option} == "s" ]; then
 		board_menu
-		install_avrpi
+		if [ ! ${board} == 0 ]; then
+			install_avrpi
+		fi
 	elif [ ${option} == "f" ]; then
 		if [ ${board} == 0 ]; then
 			board_menu
 		fi
-		fuse_menu
+		if [ ! ${board} == 0 ]; then
+			fuse_menu
+		fi
 	elif [ ${option} == "o" ]; then
 		burn_caterina
 	elif [ ${option} == "t" ]; then
