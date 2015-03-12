@@ -140,7 +140,7 @@ test_blinky()
 	else
 		echo "No blinky for you (unknown/unimplemented chip). Sorry."
 		cd ../..
-		return
+		exit 1
 	fi
 
 	if [ ${board} == "gertduino328" ]; then
