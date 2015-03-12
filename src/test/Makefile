@@ -43,31 +43,9 @@
 #     processor frequency. You can then use this symbol in your source code to 
 #     calculate timings. Do NOT tack on a 'UL' at the end, this will be done
 #     automatically to create a 32-bit value in your source code.
-F_CPU = 8000000
+#F_CPU = 8000000
 
-MCU = atmega328p
-
-# MCU name
-ifeq ($(BRD),0)
-  MCU = atmega168p
-endif
-ifeq ($(BRD),1)
-  MCU = atmega328p
-endif
-ifeq ($(BRD),4)
-  MCU = atmega32u4
-endif
-ifeq ($(BRD),5)
-  MCU = atmega328p
-  F_CPU = 12000000
-endif
-ifeq ($(BRD),6)
-  MCU = atmega328p
-  F_CPU = 16000000
-endif
-
-
-
+#MCU = atmega328p
 
 
 # Output format. (can be srec, ihex, binary)
@@ -121,7 +99,7 @@ CSTANDARD = -std=gnu99
 
 
 # Place -D or -U options here
-CDEFS = -DF_CPU=$(F_CPU)UL -DBRD=$(BRD) -DMCU=$(MCU)
+CDEFS = -DF_CPU=$(F_CPU)UL -DFAM=$(FAM) -DMCU=$(MCU)
 
 
 # Place -I options here

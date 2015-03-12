@@ -1,11 +1,10 @@
-// compile and upload with:
-// BRD=x make flash
-// where x = 0,1,2
+// compile and upload with (for example):
+// FAM=4 F_CPU=8000000 MCU=atmega32u4 make flash
 #include <avr/io.h>
 #include <util/delay.h>
 
 // ATmega32u4
-#if BRD == 4
+#if FAM == 4
 	#define LED    (1 << 7)
 	#define DIR    DDRC
 	#define PRT    PORTC

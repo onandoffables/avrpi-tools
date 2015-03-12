@@ -121,22 +121,13 @@ no_blinky()
 
 test_blinky()
 {
-	success=1
-
 	cd src/test/
 	if [ ${chip} == "atmega168p" ]; then
-		BRD=0 make flash || { make clean; no_blinky; exit 1; }
+		FAM=0 MCU=${chip} F_CPU=${speed} make flash || { make clean; no_blinky; exit 1; }
 	elif [ ${chip} == "atmega328p" ]; then
-		if [ ${speed} == "12000000" ]; then
-			BRD=2 make flash || { make clean; no_blinky; exit 1; }
-		elif [ ${speed} == "16000000" ]; then
-			BRD=3 make flash || { make clean; no_blinky; exit 1; }
-		else
-			# 8000000
-			BRD=1 make flash || { make clean; no_blinky; exit 1; }
-		fi
+		FAM=1 MCU=${chip} F_CPU=${speed} make flash || { make clean; no_blinky; exit 1; }
 	elif [ ${chip} == "atmega32u4" ]; then
-		BRD=4 make flash || { make clean; no_blinky; exit 1; }
+		FAM=4 MCU=${chip} F_CPU=${speed} make flash || { make clean; no_blinky; exit 1; }
 	else
 		echo "No blinky for you (unknown/unimplemented chip). Sorry."
 		cd ../..
