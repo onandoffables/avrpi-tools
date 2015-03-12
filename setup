@@ -80,6 +80,15 @@ install_avrdude_bin()
 
 patch_arduino()
 {
+	firsttime=0
+
+	# check if Arduino IDE is installed
+	if [ ! -f /usr/share/arduino/hardware/arduino/programmers.txt ]; then
+		echo "Arduino IDE probably not installed. Installing..."
+		sudo apt-get install -y arduino
+		firsttime=1
+	fi
+
 	cd install/
 
 	if [ ! -d arduino-linuxgpio ]; then
@@ -92,26 +101,44 @@ patch_arduino()
 	cd ..
 
 	cd ..
+
+	if [ ${firsttime} == 1 ]; then
+		# avrdude overwritten by apt-get install arduino
+		echo "### WARNING: Installing avrdude-linuxgpio again (arduino overwrote avrdude if it was already installed) ###"
+		echo ""	
+		install_avrdude_bin
+	fi
+}
+
+no_blinky()
+{
+	echo ""
+	echo "Something went wrong."
+	echo " - did you select the correct chip/board?"
+	echo " - is there anything else connected to MOSI/MISO/SCK? Disconnect that before trying again."
+	echo ""
 }
 
 test_blinky()
 {
+	success=1
+
 	cd src/test/
 	if [ ${chip} == "atmega168p" ]; then
-		BRD=0 make flash
+		BRD=0 make flash || { make clean; no_blinky; exit 1; }
 	elif [ ${chip} == "atmega328p" ]; then
 		if [ ${speed} == "12000000" ]; then
-			BRD=2 make flash
+			BRD=2 make flash || { make clean; no_blinky; exit 1; }
 		elif [ ${speed} == "16000000" ]; then
-			BRD=3 make flash
+			BRD=3 make flash || { make clean; no_blinky; exit 1; }
 		else
 			# 8000000
-			BRD=1 make flash
+			BRD=1 make flash || { make clean; no_blinky; exit 1; }
 		fi
 	elif [ ${chip} == "atmega32u4" ]; then
-		BRD=4 make flash
+		BRD=4 make flash || { make clean; no_blinky; exit 1; }
 	else
-		echo "No blinky for you. Sorry."
+		echo "No blinky for you (unknown/unimplemented chip). Sorry."
 		cd ../..
 		return
 	fi
@@ -122,6 +149,15 @@ test_blinky()
 
 	make clean
 	cd ../..
+	
+	echo ""
+	echo "Your red USR LED should blink now (0.5 seconds on, 0.5 seconds off)"
+	echo " - If it blinks slower than that (for example 4 seconds on, 4 seconds off),"
+	echo "   you probably forgot to set the fuses."
+	echo " - If it blinks at any other rate, you probably selected the wrong clockspeed."
+	echo " - If it doesn't blink at all (it's off), you may need to add a jumper on the"
+	echo "   SCK/LED pins (AVRPi-328 only)"
+	exit
 }
 
 install_wiringpi()
