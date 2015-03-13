@@ -146,8 +146,10 @@ test_blinky()
 	echo " - If it blinks slower than that (for example 4 seconds on, 4 seconds off),"
 	echo "   you probably forgot to set the fuses."
 	echo " - If it blinks at any other rate, you probably selected the wrong clockspeed."
-	echo " - If it doesn't blink at all (it's off), you may need to add a jumper on the"
-	echo "   SCK/LED pins (AVRPi-328 only)"
+	if [ ${board} == "avrpi328" ]; then
+		echo " - If it doesn't blink at all (it's off), you may need to add a jumper on the"
+		echo "   SCK/LED pins (AVRPi-328 only)"
+	fi
 	exit
 }
 
@@ -581,7 +583,7 @@ board_menu()
 
 	#set_board "board" "chip" "speed"
 	if [ ${boardnum} == "a" ]; then
-		set_board "avrpi328" "atmega328p" "8000000"
+		set_board "avrpi328" "atmega328p" "1000000"
 	elif [ ${boardnum} == "b" ]; then
 		set_board "avrpi328" "atmega328p" "8000000"
 	elif [ ${boardnum} == "c" ]; then
