@@ -3,16 +3,16 @@ AVRPi setup
 
 This setup script makes it easy to install everything you need to program AVR microcontrollers from a Raspberry Pi. It installs (or has options to install):
 
-- Arduino IDE 1.0.1 (with patches for board and programmer)
-- avrdude-6.1 (with linuxgpio support)
+- [Arduino IDE 1.0.1](http://arduino.cc/) (with patches for board and programmer)
+- [avrdude-6.1](http://download.savannah.gnu.org/releases/avrdude/) (with linuxgpio support)
 - avrpi (tool to interact easily with your Atmel microcontroller)
-- Arduino-Makefile (because friends don't let friends use the Arduino IDE)
-- wiringpi (Gordon's superduper handy tool to interact with the Raspberry Pi GPIO)
+- [Arduino-Makefile](https://github.com/sudar/Arduino-Makefile) (because friends don't let friends use the Arduino IDE)
+- [wiringpi](http://wiringpi.com/) (superduper handy tool to interact with the Raspberry Pi GPIO)
 
 ATmega32U4 specific:
 
-- LUFA (the library to use if you're serious about creating a USB Device out of your AVR)
-- dfu-programmer (to use a USB enabled board standalone with a custom bootloader)
+- [LUFA](http://www.fourwalledcubicle.com/LUFA.php) (the library to use if you're serious about creating a USB Device out of your AVR)
+- [dfu-programmer](https://github.com/dfu-programmer/dfu-programmer) (to use a USB enabled board standalone with a custom bootloader)
 
 install
 -------
