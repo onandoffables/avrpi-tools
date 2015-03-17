@@ -45,34 +45,42 @@ show_readconfig()
 
 reset()
 {
-	# RST 8
-	gpio -g mode 8 out
-	gpio -g write 8 0
-	sleep 1
-	gpio -g write 8 1
-	if [ ${board} == "gertduino328" ]; then
-		#do nothing (keep as output and high)
-		#device_tree needs to be disabled
+	if [ -f /usr/local/bin/gpio ]; then
+		# RST 8
 		gpio -g mode 8 out
+		gpio -g write 8 0
+		sleep 1
+		gpio -g write 8 1
+		if [ ${board} == "gertduino328" ]; then
+			#do nothing (keep as output and high)
+			#device_tree needs to be disabled
+			gpio -g mode 8 out
+		else
+			gpio -g mode 8 in
+		fi
 	else
-		gpio -g mode 8 in
+		echo "No gpio utility found. Skipping."
 	fi
 }
 
 bootloader()
 {
-	# RST 8
-	# PE2 23
-	gpio -g mode 23 out
-	gpio -g mode 8 out
-	gpio -g write 23 0
-	gpio -g write 8 0
-	sleep 1
-	gpio -g write 8 1
-	sleep 1
-	gpio -g write 23 1
-	gpio -g mode 8 in
-	gpio -g mode 23 in
+	if [ -f /usr/local/bin/gpio ]; then
+		# RST 8
+		# PE2 23
+		gpio -g mode 23 out
+		gpio -g mode 8 out
+		gpio -g write 23 0
+		gpio -g write 8 0
+		sleep 1
+		gpio -g write 8 1
+		sleep 1
+		gpio -g write 23 1
+		gpio -g mode 8 in
+		gpio -g mode 23 in
+	else
+		echo "No gpio utility found. Skipping."
+	fi
 }
 
 
@@ -82,7 +90,8 @@ usage()
 
 [options] is any of the following:
   -f <file>   flash <file>    flash <file> to avrpi board
-  -u <file>   upload <file>   upload <file> using bootloader
+  -u <file>   upload <file>   upload <file> using caterina bootloader
+  -d <file>   upload <file>   upload <file> using Atmel DFU bootloader
   -i          info            show info about chip
   -r          reset           reset AVR chip
   -b          bootloader      enter bootloader mode (HWB fuses set)
@@ -98,7 +107,7 @@ read_config
 cmd=0
 file=0
 
-while getopts ":hsibcmnrdu:f:" opt; do
+while getopts ":hsibcmnrd:u:f:" opt; do
   case $opt in
     h)
       cmd="help"
@@ -137,6 +146,10 @@ while getopts ":hsibcmnrdu:f:" opt; do
       cmd="upload"
       file="$OPTARG"
       ;;
+    d)
+      cmd="upload_dfu"
+      file="$OPTARG"
+      ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
       cmd="$OPTARG"
@@ -173,6 +186,11 @@ elif [ ${cmd} == "flash" ]; then
 elif [ ${cmd} == "upload" ]; then
 	bootloader
 	avrdude -v -c avr109 -p ${chip} -P ${port} -U flash:w:${file}:i
+elif [ ${cmd} == "upload_dfu" ]; then
+	bootloader
+	sudo dfu-programmer atmega32u4 erase
+	sudo dfu-programmer atmega32u4 flash ${file}
+	reset
 elif [ ${cmd} == "minicom" ]; then
 	minicom -D ${port} -b ${baud}
 elif [ ${cmd} == "screen" ]; then

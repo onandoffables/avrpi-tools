@@ -357,6 +357,12 @@ burn_caterina()
 	avrdude -i16 -c linuxgpio -p atmega32u4 -U flash:w:${caterina}:i
 }
 
+burn_dfu()
+{
+	dfu=install/bootloader/atmel_dfu/ATMega32U4-usbdevice_dfu-1_0_0.hex
+	avrdude -i16 -c linuxgpio -p atmega32u4 -U flash:w:${dfu}:i
+}
+
 no_option()
 {
 	echo "'$1' is not a valid option."
@@ -370,22 +376,23 @@ fuse_menu()
 	echo "  Fuse settings:"
 
 	if [ ${chip} == "atmega168p" ]; then
-		echo "    c)    set ATmega168p fuses (with crystal)"
+		echo "    c)    ATmega168p fuses (with crystal)"
 	elif [ ${chip} == "atmega328p" ]; then
-		echo "    a)    set ATmega328p fuses (1 MHz, no crystal)"
-		echo "    b)    set ATmega328p fuses (8 MHz, no crystal)"
-		echo "    c)    set ATmega328p fuses (8-16 MHz with crystal)"
-		echo "    d)    set ATmega328p fuses (8-16 MHz with crystal + preserve EEPROM)"
+		echo "    a)    ATmega328p fuses (1 MHz, no crystal)"
+		echo "    b)    ATmega328p fuses (8 MHz, no crystal)"
+		echo "    c)    ATmega328p fuses (8-16 MHz with crystal)"
+		echo "    d)    ATmega328p fuses (8-16 MHz with crystal + preserve EEPROM)"
 	elif [ ${chip} == "atmega32u4" ]; then
-		echo "    c)    set ATmega32U4 fuses (with crystal. recommended)"
-		echo "    d)    set ATmega32U4 fuses (with crystal + HWB enabled)"
+		echo "    c)    ATmega32U4 fuses (with crystal. recommended)"
+		echo "    d)    ATmega32U4 fuses (with crystal + HWB - bootstrap)"
+		echo "    e)    ATmega32U4 fuses (with crystal + HWB - always run bootloader)"
 	elif [ ${chip} == "atmega48p" ]; then
-		echo "    c)    set ATmega48p fuses (1 MHz, no crystal)"
-		echo "    d)    set ATmega48p fuses (8 MHz, no crystal)"
+		echo "    c)    ATmega48p fuses (1 MHz, no crystal)"
+		echo "    d)    ATmega48p fuses (8 MHz, no crystal)"
 	else
-		echo "    a)    set ${chip} fuses (1 MHz, no crystal)"
-		echo "    b)    set ${chip} fuses (8 MHz, no crystal)"
-		echo "    c)    set ${chip} fuses (8-16 MHz with crystal)"
+		echo "    a)    ${chip} fuses (1 MHz, no crystal)"
+		echo "    b)    ${chip} fuses (8 MHz, no crystal)"
+		echo "    c)    ${chip} fuses (8-16 MHz with crystal)"
 	fi
 
 	echo ""
@@ -427,10 +434,12 @@ fuse_menu()
 		if [ ${fuse} == "c" ]; then
 			set_fuse ${chip} 0xcb 0xd8 0xde
 		elif [ ${fuse} == "d" ]; then
-			# always reset to bootloader
-			#set_fuse ${chip} 0xc3 0xd8 0xde
 			# only reset to bootloader with avrpi -b
+			# (or HWB pressed when AVR comes out of reset)
 			set_fuse ${chip} 0xc3 0xd9 0xde
+		elif [ ${fuse} == "e" ]; then
+			# always reset to bootloader
+			set_fuse ${chip} 0xc3 0xd8 0xde
 		else
 			no_option $fuse
 		fi
@@ -630,7 +639,8 @@ main_menu()
 	fi
 	echo "    t)    make + upload test/blinky.hex"
 	if [ ${board} == "avrpi32u4" ]; then
-		echo "    o)    install Caterina bootloader"
+		echo "    o)    install Arduino Caterina bootloader"
+		echo "    g)    install Atmel DFU bootloader"
 	fi
 	echo ""
 	echo "  Optional extra:"
@@ -714,6 +724,8 @@ while [ ${option} != "q" ]; do
 		fi
 	elif [ ${option} == "o" ]; then
 		burn_caterina
+	elif [ ${option} == "g" ]; then
+		burn_dfu
 	elif [ ${option} == "t" ]; then
 		if [ ${board} == 0 ]; then
 			board_menu
