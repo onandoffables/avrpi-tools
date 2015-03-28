@@ -259,12 +259,13 @@ install_avrpi()
 	fi
 
 	#board
-	echo "#board can be avrpi168, avrpi328, avrpi32u4, gertboard328, gertduino328, gertduino48" >> avrpi.cfg
+	echo "#board can be avrpi168, avrpi328, avrpi32u4, gertboard328, gertduino48, gertduino328, raspioduino" >> avrpi.cfg
 	echo "board=${board}" >> avrpi.cfg
 	echo "" >> avrpi.cfg
 	
 	#chip
-	echo "#chip can be atmega168p, atmega328p, atmega32u4, atmega48p" >> avrpi.cfg
+	echo "#chip can be atmega168p, atmega328p, atmega32u4, atmega48p," >> avrpi.cfg
+	echo "#attiny85, attiny2313, at90usb162, at90usb646" >> avrpi.cfg
 	echo "chip=${chip}" >> avrpi.cfg
 	echo "" >> avrpi.cfg
 	
