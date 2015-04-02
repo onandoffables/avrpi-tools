@@ -1,7 +1,9 @@
-test
-====
+testblinky
+==========
 
-A simple example for using a generic avr-gcc Makefile. It's compiled and uploaded when you choose 'make + upload test/blinky.hex' (option 't') in the setup menu. You can use it as a template for your own projects.
+A simple example of using a generic avr-gcc Makefile. Find it in 'avrpi-tools/src/test'.
+
+It's compiled and uploaded when you choose 'make + upload test/blinky.hex' (option 't') in the setup menu. You can use it as a template for your own projects.
 
 To build and flash this blinky example for the AVRPI328 board (8MHz), run:
 
