@@ -21,11 +21,12 @@ avrpi
 
 Depending on what board you have selected in the setup menu, these settings are saved in '/etc/avrpi.cfg'
 
-	#board can be avrpi168, avrpi328, avrpi32u4, gertboard328, gertduino328, gertduino48
-	board=avrpi32u4
+	#board can be avrpi168, avrpi328, avrpi32u4, gertboard328, gertduino48, gertduino328, raspioduino
+	board=avrpi328
 
-	#chip can be atmega168p, atmega328p, atmega32u4, atmega48p
-	chip=atmega32u4
+	#chip can be atmega168p, atmega328p, atmega32u4, atmega48p,
+	#attiny85, attiny2313, at90usb162, at90usb646
+	chip=atmega328p
 
 	#speed 8000000, 12000000, 16000000
 	speed=8000000
@@ -34,9 +35,9 @@ Depending on what board you have selected in the setup menu, these settings are 
 	programmer=linuxgpio
 
 	#port /dev/ttyAMA0, /dev/ttyUSB0, /dev/ttyACM0
-	port=/dev/ttyACM0
+	port=/dev/ttyAMA0
 
-	#baud 9600, 38400, 57600, 115200 
+	#baud 9600, 38400, 57600, 115200
 	baud=9600
 
 	#delay 0, 5, 20 (isp clock delay)
