@@ -1,15 +1,7 @@
 #include <Arduino.h>
 
-/*
-  Blink
-  Turns on an LED on for one second, then off for one second, repeatedly.
- 
-  This example code is in the public domain.
- */
-void setup() {                
-  // initialize the digital pin as an output.
-  // Pin 13 has an LED connected on most Arduino boards:
-  pinMode(13, OUTPUT);
+void setup() {
+  pinMode(13, OUTPUT);      // pin 13 is an output.
 }
 
 void loop() {

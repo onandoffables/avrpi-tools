@@ -3,16 +3,15 @@ Source directory
 
 This directory contains various projects that you can use with AVRPI boards.
 
-Arduino-Makefile
-----------------
+arduino-mk
+----------
 
 To compile and upload Blink example:
 
-	cd Arduino-Makefile/examples/Blink
-	nano Makefile
-	# change BOARD_TAG from 'uno' to 'avrpi8' (or 'avrpi12', 'avrpi16', 'avrpi32u4')
-	make
-	make avrpi
+	cd arduino-mk
+	nano board.mk # change BOARD_TAG
+	cd projects/Blink
+	make ispload
 
 LUFA-AVRPI32U4
 --------------
