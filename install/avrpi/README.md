@@ -21,28 +21,15 @@ avrpi
 
 Depending on what board you have selected in the setup menu, these settings are saved in '/etc/avrpi.cfg'
 
-	#board can be avrpi168, avrpi328, avrpi32u4, gertboard328, gertduino48, gertduino328, raspioduino
-	board=avrpi328
-
-	#chip can be atmega168p, atmega328p, atmega32u4, atmega48p,
-	#attiny85, attiny2313, at90usb162, at90usb646
-	chip=atmega328p
-
-	#speed 8000000, 12000000, 16000000
-	speed=8000000
-
-	#programmer linuxgpio, gpio
-	programmer=linuxgpio
-
-	#port /dev/ttyAMA0, /dev/ttyUSB0, /dev/ttyACM0
-	port=/dev/ttyAMA0
-
-	#baud 9600, 38400, 57600, 115200
-	baud=9600
-
-	#delay 0, 5, 20 (isp clock delay)
-	#anything other than 0 adds -i avrdude option
-	delay=5
+	pi@raspberrypi ~ $ avrpi -s
+	Use 'avrpi -c' to edit settings:
+	  board = avrpi328
+	  chip = atmega328p
+	  speed = 8000000
+	  programmer = linuxgpio
+	  port = /dev/ttyAMA0
+	  baud = 9600
+	  delay = 5
 
 The 'port' and 'baud' settings apply to USART port that avrpi will use to communicate in 'screen' or 'minicom'. It's not used in programming with avrdude.
 

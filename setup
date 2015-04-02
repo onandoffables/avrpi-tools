@@ -260,6 +260,7 @@ install_avrpi()
 
 	#board
 	echo "#board can be avrpi168, avrpi328, avrpi32u4, gertboard328, gertduino48, gertduino328, raspioduino" >> avrpi.cfg
+	echo "#PLEASE NOTE: this internal 'board' variable is not related to Arduino 'boards.txt' file." >> avrpi.cfg
 	echo "board=${board}" >> avrpi.cfg
 	echo "" >> avrpi.cfg
 	
