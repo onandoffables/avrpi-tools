@@ -313,15 +313,16 @@ install_avrpi()
 
 install_arduino_mk()
 {
-	cd src/
-	./install_Arduino-Makefile.sh
+	cd src/arduino-mk
+	./bootstrap.sh
 	cd ..
 	
 	echo ""
 	echo "Usage:"
-	echo "  cd src/Arduino-Makefile/examples/Blink"
-	echo "  [edit Makefile]"
-	echo "  make avrpi"
+	echo "  cd src/arduino-mk"
+	echo "  [edit board.mk]"
+	echo "  cd projects/Blink"
+	echo "  make ispload"
 }
 
 install_LUFA()
