@@ -41,7 +41,7 @@ apt_get_tools()
 
 apt_get_arduino()
 {
-	sudo apt-get install arduino # Arduino IDE
+	sudo apt-get install -y arduino # Arduino IDE
 }
 
 apt_get_everything()
