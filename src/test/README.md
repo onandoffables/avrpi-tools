@@ -7,7 +7,7 @@ It's compiled and uploaded when you choose 'make + upload test/blinky.hex' (opti
 
 To build and flash this blinky example for the AVRPI328 board (8MHz), run:
 
-	F_CPU=8000000 MCU=atmega328p make flash
+	FAM=3 F_CPU=8000000 MCU=atmega328p make flash
 
 To build and flash for the AVRPI32U4 board, run:
 

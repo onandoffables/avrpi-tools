@@ -1,0 +1,8 @@
+#!/usr/bin/sudo bash
+
+if [ -d /sys/class/gpio/gpio8 ]; then
+  sudo echo "8" >/sys/class/gpio/unexport
+fi
+sudo echo "8" >/sys/class/gpio/export
+sudo echo "out" >/sys/class/gpio/gpio8/direction
+sudo echo "1" >/sys/class/gpio/gpio8/value

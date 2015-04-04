@@ -121,6 +121,10 @@ no_blinky()
 
 test_blinky()
 {
+	if [ ${board} == "gertduino328" ]; then
+		reset_unexport
+	fi
+
 	cd src/test/
 	if [ ${chip} == "atmega168p" ]; then
 		FAM=0 MCU=${chip} F_CPU=${speed} make flash || { make clean; no_blinky; exit 1; }
@@ -135,12 +139,12 @@ test_blinky()
 	fi
 
 	if [ ${board} == "gertduino328" ]; then
-		avrpi -r
+		reset_off
 	fi
 
 	make clean
 	cd ../..
-	
+
 	echo ""
 	echo "Your red USR LED should blink now (0.5 seconds on, 0.5 seconds off)"
 	echo " - If it blinks slower than that (for example 4 seconds on, 4 seconds off),"
@@ -241,6 +245,15 @@ uninstall_avrpi()
 	speed=0
 }
 
+install_gertduino()
+{
+	cd install/gertduino
+	sudo cp reset_on /usr/local/bin
+	sudo cp reset_off /usr/local/bin
+	sudo cp reset_unexport /usr/local/bin
+	cd ../..
+}
+
 install_avrpi()
 {
 	cd install/avrpi
@@ -310,6 +323,10 @@ install_avrpi()
 	avrpi -s
 	
 	cd ../..
+
+	if [ ${board} == "gertduino328" ]; then
+		install_gertduino
+	fi
 }
 
 install_arduino_mk()
@@ -573,8 +590,8 @@ board_menu()
 	echo ""
 	echo "  Others"
 	echo "    u)    Gertboard (ATmega328p @ 12 MHz)"
-#	echo "    v)    Gertduino (ATmega328p @ 16 MHz)"
-#	echo "    w)    Gertduino48 (ATmega48p no crystal @ 8 MHz max.)"
+	echo "    v)    Gertduino328 (ATmega328p @ 16 MHz)"
+	echo "    w)    Gertduino48 (ATmega48p no crystal @ 8 MHz max.)"
 	echo "    x)    RasPiO Duino (ATmega328p @ 12 MHz)"
 	echo ""
 	echo "  Custom chips"

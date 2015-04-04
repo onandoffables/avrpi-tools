@@ -49,17 +49,17 @@ reset()
 		# RST 8
 		gpio -g mode 8 out
 		gpio -g write 8 0
-		sleep 1
+		#sleep 1
 		gpio -g write 8 1
-		if [ ${board} == "gertduino328" ]; then
-			#do nothing (keep as output and high)
-			#device_tree needs to be disabled
-			gpio -g mode 8 out
-		else
-			gpio -g mode 8 in
-		fi
+		gpio -g mode 8 in
 	else
-		echo "No gpio utility found. Skipping."
+		echo "No gpio utility found. Skipping (please install wiringPi)."
+	fi
+	
+	if [ ${board} == "gertduino328" ]; then
+		reset_on
+		#sleep 1
+		reset_off
 	fi
 }
 
@@ -80,6 +80,13 @@ bootloader()
 		gpio -g mode 23 in
 	else
 		echo "No gpio utility found. Skipping."
+	fi
+}
+
+prepare()
+{
+	if [ ${board} == "gertduino328" ]; then
+		reset_unexport
 	fi
 }
 
@@ -173,15 +180,27 @@ elif [ ${cmd} == "bootloader" ]; then
 elif [ ${cmd} == "config" ]; then
 	sudo nano /etc/avrpi.cfg
 elif [ ${cmd} == "info" ]; then
+	if [ ${board} == "gertduino328" ]; then
+		prepare
+	fi
 	echo "avrdude -v -c ${programmer} -p ${chip}" >&2
 	avrdude -v -c ${programmer} -p ${chip}
+	if [ ${board} == "gertduino328" ]; then
+		reset
+	fi
 elif [ ${cmd} == "flash" ]; then
+	if [ ${board} == "gertduino328" ]; then
+		prepare
+	fi
 	if [ ${delay} == 0 ]; then
 		echo "avrdude -v -c ${programmer} -p ${chip} -U flash:w:${file}" >&2
 		avrdude -v -c ${programmer} -p ${chip} -U flash:w:${file}:i
 	else
 		echo "avrdude -v -c ${programmer} -p ${chip} -i ${delay} -U flash:w:${file}" >&2
 		avrdude -v -c ${programmer} -p ${chip} -i ${delay} -U flash:w:${file}:i
+	fi
+	if [ ${board} == "gertduino328" ]; then
+		reset
 	fi
 elif [ ${cmd} == "upload" ]; then
 	bootloader
