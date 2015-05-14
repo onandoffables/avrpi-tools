@@ -2,10 +2,10 @@
 
 typedef struct
 {
-  char key;        // which keycode to emit when input is pressed
-  int  port;       // which port is this input on? 0 = PORTB, 1 = PORTF, 2 = PORTD
-  char mask;       // bitmask for the input on the port
-  boolean pressed; // is this input current pressed?
+  uint8_t key;        // which keycode to emit when input is pressed
+  uint8_t  port;       // which port is this input on? 0 = PORTB, 1 = PORTF, 2 = PORTD
+  uint8_t mask;       // bitmask for the input on the port
+  boolean state; // is this input current pressed?
 } input;
 
 // PICADE: Switch to PCB Mappings
@@ -75,10 +75,13 @@ void setup() {
   /*
     Setup the ports to be inputs will pullup resistors enabled
   */
-  DDRB = DDRD = DDRF = B00000000; // set ports B, D, F to be inputs
+  DDRB = DDRC = DDRD = DDRF = B00000000; // set ports B, D, F to be inputs
   PORTB = PORTD = B11111111; // set the pullup resistors on ports B, D
-  PORTC = B01000000; // set the pullup resistors on port C
+  PORTC = B11000000; // set the pullup resistors on port C
   PORTF = B11110011; // set the pullup resistors on port F
+  
+  Serial.begin(9600);
+  Keyboard.begin();
 }
 
 void loop() {
@@ -86,18 +89,18 @@ void loop() {
     Check the state of each input, if it has changed then output the corresponding keypress
   */
   boolean changed = false;  // has any input changed?
-  char pinStates[4] = {PINB, PINF, PIND, PINC}; // read the current port states and store in 0, 1, 2 indexed array to match our port ids above
+  uint8_t pinStates[4] = {PINB, PINF, PIND, PINC}; // read the current port states and store in 0, 1, 2 indexed array to match our port ids above
 
   // loop through each input
-  for(int i = 0; i < sizeof(inputs) / sizeof(input); i++)
+  for(unsigned int i = 0; i < sizeof(inputs) / sizeof(input); i++)
   {
     // test for current state of this input
     boolean test = ~pinStates[inputs[i].port] & inputs[i].mask;
 
-    if(test != inputs[i].pressed) // has this input changed state since the last time we checked?
+    if(test != inputs[i].state) // has this input changed state since the last time we checked?
     {
       changed = true; // something changed, we should remember that
-      inputs[i].pressed = test; // update our state map so we know what's happening with this key in future
+      inputs[i].state = test; // update our state map so we know what's happening with this key in future
 
       if(test) // send the key press or release event
         Keyboard.press(inputs[i].key);
