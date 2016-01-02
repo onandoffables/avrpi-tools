@@ -28,7 +28,7 @@ fi
 
 apt_get_dependencies()
 {
-	sudo apt-get install -y libusb-1.0-0-dev libftdi-dev autoconf bison flex bc # compile avrdude
+	sudo apt-get install -y libusb-1.0-0-dev libftdi-dev autoconf bison flex bc libtool # compile avrdude
 	sudo apt-get install -y avr-libc binutils-avr gcc-avr avra # avr-gcc and friends
 	sudo apt-get install -y git-core make # ubuntu_armhf doesn't have these
 	#sudo apt-get install -y gdb-avr simulavr # debugging
@@ -105,7 +105,7 @@ patch_arduino()
 	if [ ${firsttime} == 1 ]; then
 		# avrdude overwritten by apt-get install arduino
 		echo "### WARNING: Installing avrdude-linuxgpio again (arduino overwrote avrdude if it was already installed) ###"
-		echo ""	
+		echo ""
 		install_avrdude_bin
 	fi
 }
@@ -174,7 +174,7 @@ install_wiringpi()
 		./build
 		cd ..
 	fi
-	
+
 	cd ..
 }
 
@@ -190,7 +190,7 @@ uninstall_wiringpi()
 	else
 		echo "No wiringPi source directory found."
 	fi
-	
+
 	cd ..
 }
 
@@ -207,7 +207,7 @@ install_dfu_programmer()
 		git clone https://github.com/dfu-programmer/dfu-programmer
 		cd dfu-programmer
 	fi
-	
+
 	./bootstrap.sh
 	./configure
 	make
@@ -264,7 +264,7 @@ install_avrpi()
 	else
 		echo "/etc/avrpi.cfg not found. Installing avrpi default config..." >&2
 	fi
-	
+
 	#local avrpi.cfg
 	if [ -f avrpi.cfg ]; then
 		#echo "Existing local config file found. Removing and creating new one..." >&2
@@ -276,23 +276,23 @@ install_avrpi()
 	echo "#PLEASE NOTE: this internal 'board' variable is not related to Arduino 'boards.txt' file." >> avrpi.cfg
 	echo "board=${board}" >> avrpi.cfg
 	echo "" >> avrpi.cfg
-	
+
 	#chip
 	echo "#chip can be atmega168p, atmega328p, atmega32u4, atmega48p," >> avrpi.cfg
 	echo "#attiny85, attiny2313, at90usb162, at90usb646" >> avrpi.cfg
 	echo "chip=${chip}" >> avrpi.cfg
 	echo "" >> avrpi.cfg
-	
+
 	#speed
 	echo "#speed 8000000, 12000000, 16000000" >> avrpi.cfg
 	echo "speed=${speed}" >> avrpi.cfg
 	echo "" >> avrpi.cfg
-	
+
 	#programmer
 	echo "#programmer linuxgpio, gpio" >> avrpi.cfg
 	echo "programmer=linuxgpio" >> avrpi.cfg
 	echo "" >> avrpi.cfg
-	
+
 	#port
 	echo "#port /dev/ttyAMA0, /dev/ttyUSB0, /dev/ttyACM0" >> avrpi.cfg
 	if [ ${chip} == "atmega32u4" ]; then
@@ -301,27 +301,27 @@ install_avrpi()
 		echo "port=/dev/ttyAMA0" >> avrpi.cfg
 	fi
 	echo "" >> avrpi.cfg
-	
+
 	#baud
 	echo "#baud 9600, 38400, 57600, 115200 " >> avrpi.cfg
 	echo "baud=9600" >> avrpi.cfg
 	echo "" >> avrpi.cfg
-	
+
 	#delay
 	echo "#delay 0, 5, 20 (isp clock delay)" >> avrpi.cfg
 	echo "#anything other than 0 adds -i avrdude option" >> avrpi.cfg
 	echo "delay=5" >> avrpi.cfg
 	#echo "" >> avrpi.cfg
-	
+
 	echo "Copy new avrpi.cfg to /etc/avrpi.cfg" >&2
 	sudo cp avrpi.cfg /etc/avrpi.cfg
 	echo "Copy avrpi to /usr/local/bin/avrpi" >&2
 	sudo cp avrpi /usr/local/bin/avrpi
 	echo "Cleaning up local avrpi.cfg..." >&2
 	rm avrpi.cfg
-	
+
 	avrpi -s
-	
+
 	cd ../..
 
 	if [ ${board} == "gertduino328" ]; then
@@ -334,7 +334,7 @@ install_arduino_mk()
 	cd src/arduino-mk
 	./bootstrap.sh
 	cd ..
-	
+
 	echo ""
 	echo "Usage:"
 	echo "  cd src/arduino-mk"
@@ -348,7 +348,7 @@ install_LUFA()
 	cd src/
 	./install_LUFA-AVRPI32U4.sh
 	cd ..
-	
+
 	echo ""
 	echo "Usage:"
 	echo "  cd src/LUFA-AVRPI32U4/examples/Keyboard"
@@ -533,14 +533,14 @@ custom_menu()
 
 	echo "What board/chip do you have:"
 	read boardnum
-	
+
 	if [ -z ${boardnum} ]; then
 		exit
 	fi
 	if [ ${boardnum} == "q" ]; then
 		return
 	fi
-	
+
 	if [ ${boardnum} == "a" ]; then
 		set_board "custom" "atmega168p" "8000000"
 	elif [ ${boardnum} == "b" ]; then
@@ -602,7 +602,7 @@ board_menu()
 
 	echo "What board/chip do you have:"
 	read boardnum
-	
+
 	if [ -z ${boardnum} ]; then
 		exit
 	fi
@@ -698,11 +698,11 @@ while [ ${option} != "q" ]; do
 
 	echo "Enter your choice:"
 	read option
-	
+
 	if [ -z ${option} ]; then
 		exit
 	fi
-	
+
 	if [ ${option} == "e" ]; then
 		install_everything
 

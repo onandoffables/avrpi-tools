@@ -4,7 +4,7 @@ AVRPi setup
 This setup script makes it easy to install everything you need to program AVR microcontrollers from a Raspberry Pi. It installs (or has options to install):
 
 - [Arduino IDE 1.0.1](http://arduino.cc/) (with patches for board and programmer)
-- [avrdude-6.1](http://download.savannah.gnu.org/releases/avrdude/) (with linuxgpio support)
+- [avrdude-6.2](http://download.savannah.gnu.org/releases/avrdude/) (with linuxgpio support)
 - avrpi (tool to interact easily with your Atmel microcontroller)
 - [Arduino-Makefile](https://github.com/sudar/Arduino-Makefile) (because friends don't let friends use the Arduino IDE)
 - [wiringpi](http://wiringpi.com/) (superduper handy tool to interact with the Raspberry Pi GPIO)
@@ -32,30 +32,30 @@ After you run ./setup, a menu appears. Depending on the board selected, the menu
 	#######################################################################
 	#                          avrpi-tools                                #
 	#######################################################################
-	
+
 	  Install everything in 1 easy step:
 	    e)    Arduino IDE + avrdude
-	
+
 	  First time - fuses and test:
 	    s)    set board/chip/speed
 	    f)    set fuses for your board
 	    t)    make + upload test/blinky.hex
-	
+
 	  Custom install:
 	    a)    apt-get all dependencies and toolchain (without Arduino)
 	    b)    install pre-compiled avrdude binary
 	    c)    compile + install avrdude from source
 	    p)    patch arduino
-	
+
 	  Optional extra:
 	    w)    install wiringPi
 	    v)    install avrpi tool (and save board settings)
-	
+
 	  Software and projects:
 	    m)    install Arduino-Makefile
-	
+
 	    q)    quit
-	
+
 	Enter your choice:
 
 
